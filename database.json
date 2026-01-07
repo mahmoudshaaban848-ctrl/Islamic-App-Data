@@ -1,0 +1,89 @@
+{
+  "app_identity": {
+    "name_ar": "المرجعية الإسلامية - النسخة الشاملة",
+    "name_en": "Islamic Reference - Ultimate Edition",
+    "version": "13.0.0",
+    "developer_note": "النسخة النهائية المرحلة الأولى - دمج شامل للمحتوى والتقنية",
+    "build_date": "2025-11-05"
+  },
+  "technical_settings": {
+    "languages": [
+      {"code": "ar", "name": "العربية", "dir": "rtl", "is_default": true},
+      {"code": "en", "name": "English", "dir": "ltr", "is_default": false}
+    ],
+    "ui_features": {
+      "night_mode": true,
+      "font_size_control": true,
+      "audio_player": true,
+      "offline_storage": true
+    }
+  },
+  "core_sections": {
+    "1_quran_center": {
+      "title": "مركز القرآن الكريم",
+      "sub_sections": ["المصحف الكامل", "تفسير ابن كثير", "أسباب النزول"],
+      "smart_feature": "ورد الختمة الذكي (تتبع التقدم اليومي)"
+    },
+    "2_hadith_encyclopedia": {
+      "title": "موسوعة السنة النبوية",
+      "main_sources": ["صحيح البخاري", "صحيح مسلم", "الأربعون النووية"],
+      "tools": ["شرح الغريب", "تخريج الأحاديث الآلي"]
+    },
+    "3_salaf_aqidah": {
+      "title": "مكتبة العقيدة ومنهج السلف",
+      "books": [
+        {"id": "AQ01", "title": "شرح اعتقاد أهل السنة", "author": "اللالكائي"},
+        {"id": "AQ02", "title": "كتاب التوحيد", "author": "ابن خزيمة"},
+        {"id": "AQ03", "title": "الإبانة", "author": "ابن بطة"},
+        {"id": "AQ04", "title": "الشريعة", "author": "الآجري"},
+        {"id": "AQ05", "title": "كتاب السنة", "author": "الإمام أحمد"}
+      ]
+    },
+    "4_daily_worship": {
+      "title": "حصن المسلم وعبادات اليوم",
+      "athkar_system": {
+        "interactive_counter": true,
+        "categories": [
+          {
+            "name": "أذكار الصباح والمساء",
+            "items": [
+              {
+                "text": "سبحان الله وبحمده",
+                "count_target": 100,
+                "reward": "غفرت ذنوبه وإن كانت مثل زبد البحر"
+              },
+              {
+                "text": "اللهم بك أصبحنا وبك أمسينا",
+                "count_target": 1,
+                "reward": "حفظ العبد في يومه"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "5_companions_history": {
+      "title": "جيل الصحابة والسيرة",
+      "features": {
+        "timeline": "التسلسل الزمني للغزوات النبوية",
+        "badges": ["وسام قارئ السيرة", "وسام محب الصحابة"],
+        "map_integration": "خريطة انتشار الإسلام التفاعلية"
+      }
+    }
+  },
+  "ai_and_search": {
+    "smart_teacher": {
+      "status": "Enabled",
+      "logic": "إجابات معتمدة على مصادر أهل السنة المدمجة فقط"
+    },
+    "semantic_search": {
+      "indexed_topics": ["الصلاة", "التوحيد", "الأخلاق", "بر الوالدين", "المعاملات"],
+      "search_type": "Deep Link Search"
+    }
+  },
+  "user_experience_extras": {
+    "daily_challenge": "سؤال اليوم في العقيدة أو السيرة",
+    "highlight_system": "خاصية 'صيد الفوائد' لحفظ الاقتباسات",
+    "community_sharing": "تحويل الحديث أو الذكر لبطاقة دعوية (Image Generation)"
+  }
+}
