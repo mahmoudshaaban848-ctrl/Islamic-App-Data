@@ -1,40 +1,93 @@
-function renderAzkar(sectionName) {
-    const container = document.getElementById('azkar-container');
-    if(!container) return;
-    container.innerHTML = ''; 
+let activeSection = '';
 
-    const list = azkarData[sectionName];
+function openSection(section) {
+    activeSection = section;
+    document.getElementById('home-view').style.display = 'none';
+    document.getElementById('section-view').style.display = 'block';
+    window.scrollTo(0,0);
+    
+    const titles = {
+        morning: 'أذكار الصباح',
+        evening: 'أذكار المساء',
+        sleep: 'أذكار النوم',
+        wake: 'أذكار الاستيقاظ',
+        prayer: 'أذكار ما بعد الصلاة'
+    };
+    document.getElementById('section-title').innerText = titles[section];
+    renderAzkar();
+}
 
-    list.forEach(item => {
-        let currentCount = localStorage.getItem(`count_${item.id}`) || item.count;
+function goHome() {
+    document.getElementById('home-view').style.display = 'grid';
+    document.getElementById('section-view').style.display = 'none';
+}
+
+function renderAzkar() {
+    const list = document.getElementById('azkar-list');
+    list.innerHTML = '';
+    const data = azkarData[activeSection];
+
+    data.forEach(item => {
+        const storageKey = `zekr_${item.id}`;
+        let saved = localStorage.getItem(storageKey);
         
-        const zikrDiv = document.createElement('div');
-        zikrDiv.className = 'zikr';
+        // إذا لم يكن هناك قيمة محفوظة، نستخدم القيمة الأصلية
+        if (saved === null) {
+            saved = item.count;
+        } else {
+            saved = parseInt(saved);
+        }
+
+        const isDone = saved === 0;
         
-        zikrDiv.innerHTML = `
-            <div class="zikr-text">${item.text}</div>
-            <div id="btn_${item.id}" 
-                 class="count ${currentCount == 0 ? 'done' : ''}" 
-                 onclick="updateCounter('${item.id}', ${item.count})">
-                 ${currentCount == 0 ? '✓' : currentCount}
+        const card = document.createElement('div');
+        card.className = `zekr-card ${isDone ? 'completed' : ''}`;
+        card.onclick = () => decrement(item.id, item.count);
+        
+        card.innerHTML = `
+            <span class="zekr-text">${item.text}</span>
+            <div class="counter-footer">
+                <span style="color: #64748b; font-weight: bold;">${isDone ? '✓ اكتمل الذكر' : 'المتبقي'}</span>
+                <div class="count-circle">${isDone ? '✓' : saved}</div>
             </div>
         `;
-        container.appendChild(zikrDiv);
+        list.appendChild(card);
     });
 }
 
-function updateCounter(id, originalCount) {
-    let current = parseInt(localStorage.getItem(`count_${id}`) || originalCount);
+function decrement(id, originalCount) {
+    const storageKey = `zekr_${id}`;
+    let current = localStorage.getItem(storageKey);
+    
+    if (current === null) current = originalCount;
+    current = parseInt(current);
+
     if (current > 0) {
         current--;
-        localStorage.setItem(`count_${id}`, current);
-        const btn = document.getElementById(`btn_${id}`);
-        if (current === 0) {
-            btn.innerHTML = '✓';
-            btn.classList.add('done');
-        } else {
-            btn.innerHTML = current;
+        localStorage.setItem(storageKey, current);
+        renderAzkar();
+        
+        // اهتزاز بسيط عند الانتهاء (للموبايل)
+        if (current === 0 && window.navigator.vibrate) {
+            window.navigator.vibrate(50);
         }
     }
 }
 
+function showResetModal() {
+    document.getElementById('confirmModal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('confirmModal').style.display = 'none';
+}
+
+function executeReset() {
+    if (activeSection && azkarData[activeSection]) {
+        azkarData[activeSection].forEach(item => {
+            localStorage.removeItem(`zekr_${item.id}`);
+        });
+        renderAzkar();
+    }
+    closeModal();
+}
