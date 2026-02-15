@@ -6,14 +6,14 @@
     <title>تطبيق المرجعية الإسلامية</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2c3e50">
+    <meta name="theme-color" content="#2c5e50">
 </head>
 <body>
 
 <div id="confirmModal" class="modal-overlay">
     <div class="modal-content">
         <h3>تنبيه</h3>
-        <p>هل تريد إعادة تصفير جميع العدادات في هذا القسم؟</p>
+        <p>هل تريد إعادة تصفير العدادات؟</p>
         <div class="modal-btns">
             <button class="confirm-ok" onclick="executeReset()">تصفير</button>
             <button class="confirm-cancel" onclick="closeModal()">إلغاء</button>
@@ -23,21 +23,30 @@
 
 <div id="home-view" class="main-menu">
     <div class="menu-header">
-        <h1 style="margin:0;">المرجعية الإسلامية</h1>
-        <p style="color: #636e72;">حِصنك اليومي من الأذكار</p>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <button id="theme-btn" onclick="toggleTheme()" style="background:none; border:none; font-size: 24px;">🌙</button>
+            <h1 style="margin:0; color: var(--primary-color);">المرجعية الإسلامية</h1>
+            <div style="width:24px;"></div> </div>
+        <p style="color: #636e72;">دليلك الشرعي وحصنك اليومي</p>
     </div>
-    <button class="menu-card btn-morning" onclick="openSection('morning')">أذكار الصباح</button>
-    <button class="menu-card btn-evening" onclick="openSection('evening')">أذكار المساء</button>
-    <button class="menu-card btn-sleep" onclick="openSection('sleep')">أذكار النوم</button>
-    <button class="menu-card btn-wake" onclick="openSection('wake')">أذكار الاستيقاظ</button>
-    <button class="menu-card btn-prayer" onclick="openSection('prayer')">أذكار بعد الصلاة</button>
-    <button class="menu-card" style="background: #34495e; grid-column: span 2; padding: 20px;" onclick="shareApp()">📤 مشاركة التطبيق</button>
+    
+    <button class="menu-card" onclick="openSection('morning')">🌅 أذكار الصباح</button>
+    <button class="menu-card" onclick="openSection('evening')">🌆 أذكار المساء</button>
+    <button class="menu-card" onclick="openSection('sleep')">🌙 أذكار النوم</button>
+    <button class="menu-card" onclick="openSection('wake')">☀️ أذكار الاستيقاظ</button>
+    
+    <button class="menu-card btn-prayer" onclick="alert('جاري برمجة المواقيت والأذان تلقائياً...')">🕌 مواقيت الصلاة</button>
+    <button class="menu-card btn-qibla" onclick="alert('جاري إعداد بوصلة القبلة...')">🧭 اتجاه القبلة</button>
+    
+    <button class="menu-card btn-library" style="grid-column: span 2;" onclick="alert('جاري تحضير مكتبة الكتب (البخاري، مسلم، الفقه)...')">📚 المكتبة الإسلامية الشاملة</button>
+    
+    <button class="menu-card" style="background: #34495e; grid-column: span 2;" onclick="shareApp()">📤 مشاركة التطبيق</button>
 </div>
 
 <div id="section-view" class="view-container">
     <div class="header-nav">
-        <button class="nav-btn" onclick="goHome()">🏠 القائمة</button>
-        <h3 id="section-title" style="margin:0;"></h3>
+        <button class="nav-btn" onclick="goHome()">🏠 عودة</button>
+        <h3 id="section-title"></h3>
         <button class="nav-btn reset-btn" onclick="showResetModal()">🔄 تصفير</button>
     </div>
     <div id="azkar-list"></div>
@@ -45,19 +54,18 @@
 
 <script src="data.js"></script>
 <script src="script.js"></script>
+
 <script>
-    // تفعيل العمل بدون إنترن
+// كود تحديث التطبيق الذكي
 let newWorker;
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then(reg => {
-            // كود مراقبة التحديثات
             reg.addEventListener('updatefound', () => {
                 newWorker = reg.installing;
                 newWorker.addEventListener('statechange', () => {
                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        // تظهر هذه الرسالة بمجرد تغييرك لـ v2 إلى v3 في ملف sw.js
-                        if (confirm("يوجد تحديث جديد للأذكار، هل تريد التحميل الآن؟")) {
+                        if (confirm("يوجد تحديث شامل جديد، هل تريد التحميل؟")) {
                             window.location.reload();
                         }
                     }
@@ -67,6 +75,20 @@ if ('serviceWorker' in navigator) {
     });
 }
 
+// وظيفة تبديل الوضع الليلي
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    document.getElementById('theme-btn').innerText = isDark ? '☀️' : '🌙';
+}
+
+// استرجاع الوضع المفضل
+if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark-mode');
+    document.getElementById('theme-btn').innerText = '☀️';
+}
 </script>
+
 </body>
 </html>
