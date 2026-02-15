@@ -1,11 +1,12 @@
 {
   "name": "المرجعية الإسلامية - الأذكار",
   "short_name": "الأذكار",
-  "description": "تطبيق الأذكار اليومية الكاملة",
-  "start_url": "index.html",
+  "description": "تطبيق الأذكار اليومية الكاملة - حصنك اليومي",
+  "start_url": "https://mahmoudshaaban848-ctrl.github.io/Islamic-App-Data/",
   "display": "standalone",
   "background_color": "#f4f7f9",
   "theme_color": "#2c3e50",
+  "scope": "https://mahmoudshaaban848-ctrl.github.io/Islamic-App-Data/",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/2972/2972331.png",
