@@ -1,24 +1,26 @@
 :root {
-    --primary: #2c3e50;
-    --morning: #f39c12;
-    --evening: #8e44ad;
-    --sleep: #2980b9;
-    --wake: #16a085;
-    --prayer: #27ae60;
-    --bg: #f4f7f9;
+    --primary-color: #2c5e50; /* أخضر إسلامي هادئ */
+    --secondary-color: #d4c4a8; /* بيج رملي */
+    --bg-color: #f7f9f6; /* أبيض مائل للخضرة الفاتحة جداً */
+    --text-color: #2d3436;
     --card-bg: #ffffff;
-    --text-main: #2d3436;
+}
+
+body.dark-mode {
+    --primary-color: #1a3c34;
+    --secondary-color: #b09e80;
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --card-bg: #1e1e1e;
 }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg);
+    background-color: var(--bg-color);
+    color: var(--text-color);
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .main-menu {
@@ -26,141 +28,67 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 15px;
     padding: 20px;
-    width: 100%;
-    max-width: 500px;
-    margin-top: 30px;
+    max-width: 600px;
+    margin: auto;
 }
 
 .menu-header {
     grid-column: span 2;
     text-align: center;
-    color: var(--primary);
-    margin-bottom: 10px;
+    padding: 20px 0;
 }
 
 .menu-card {
-    padding: 35px 10px;
-    border-radius: 20px;
-    border: none;
+    background-color: var(--primary-color);
     color: white;
-    font-size: 1.2rem;
+    border: none;
+    border-radius: 15px;
+    padding: 25px 10px;
+    font-size: 18px;
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
-    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
 }
 
-.menu-card:active { transform: scale(0.95); }
-.btn-morning { background: var(--morning); }
-.btn-evening { background: var(--evening); }
-.btn-sleep { background: var(--sleep); }
-.btn-wake { background: var(--wake); }
-.btn-prayer { background: var(--prayer); grid-column: span 2; }
-
-.view-container {
-    display: none;
-    width: 100%;
-    max-width: 650px;
-    padding: 15px;
-    animation: fadeIn 0.4s ease-out;
+.menu-card:active {
+    transform: scale(0.95);
 }
 
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.btn-library { background-color: #8e44ad; }
+.btn-prayer { background-color: #d35400; }
+.btn-qibla { background-color: #2980b9; }
+
+.view-container { display: none; padding: 20px; max-width: 600px; margin: auto; }
 
 .header-nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    background: white;
-    padding: 12px 20px;
-    border-radius: 15px;
-    position: sticky;
-    top: 10px;
-    z-index: 100;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-.nav-btn {
-    background: #f0f2f5;
-    border: none;
-    padding: 8px 15px;
+    background: var(--card-bg);
+    padding: 15px;
     border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    color: var(--primary);
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
-
-.reset-btn { background: #fee2e2; color: #dc2626; }
 
 .zekr-card {
-    background: white;
-    border-radius: 18px;
-    padding: 22px;
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
     margin-bottom: 15px;
-    box-shadow: 0 3px 15px rgba(0,0,0,0.04);
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: 0.2s;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.zekr-card:active { transform: scale(0.98); }
-
-.zekr-text {
-    font-size: 1.25rem;
-    line-height: 1.9;
-    color: var(--text-main);
-    text-align: justify;
-    display: block;
-    margin-bottom: 15px;
-}
-
-.counter-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 12px;
-    border-top: 1px solid #f0f0f0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .count-circle {
-    width: 55px;
-    height: 55px;
+    background: var(--primary-color);
+    color: white;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    font-size: 1.2rem;
-    color: white;
-    background: var(--primary);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-
-.completed { opacity: 0.6; background: #f8fafc !important; border: 1px solid #e2e8f0; }
-.completed .count-circle { background: #94a3b8 !important; }
-
-.modal-overlay {
-    display: none;
-    position: fixed;
-    top:0; left:0; width:100%; height:100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-}
-.modal-content {
-    background: white;
-    padding: 25px;
-    border-radius: 20px;
-    text-align: center;
-    width: 85%;
-    max-width: 350px;
-}
-.modal-btns { display: flex; gap: 10px; margin-top: 20px; }
-.modal-btns button { flex:1; padding: 12px; border-radius: 10px; border:none; cursor:pointer; font-weight:bold; }
-.confirm-ok { background: #dc2626; color: white; }
-.confirm-cancel { background: #e5e7eb; }
  
