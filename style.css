@@ -1,17 +1,18 @@
+/* تعريف الألوان الأساسية - طابع إسلامي هادئ */
 :root {
-    --primary-color: #2c5e50; /* أخضر إسلامي هادئ */
-    --secondary-color: #d4c4a8; /* بيج رملي */
-    --bg-color: #f7f9f6; /* أبيض مائل للخضرة الفاتحة جداً */
+    --primary-color: #2c5e50;    /* أخضر غامق وقور */
+    --accent-color: #b8860b;     /* ذهبي خافت للمسات الجمالية */
+    --bg-color: #f4f7f4;        /* خلفية مريحة للعين */
     --text-color: #2d3436;
     --card-bg: #ffffff;
 }
 
+/* ألوان الوضع الليلي الاحترافي */
 body.dark-mode {
-    --primary-color: #1a3c34;
-    --secondary-color: #b09e80;
     --bg-color: #121212;
     --text-color: #e0e0e0;
     --card-bg: #1e1e1e;
+    --primary-color: #1a3c34;
 }
 
 body {
@@ -20,75 +21,100 @@ body {
     color: var(--text-color);
     margin: 0;
     padding: 0;
-    transition: background-color 0.3s, color 0.3s;
+    direction: rtl;
+    transition: all 0.3s ease;
 }
 
+/* تنسيق القائمة الرئيسية */
 .main-menu {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr; /* تقسيم الشاشة لزرين بجانب بعض */
     gap: 15px;
     padding: 20px;
-    max-width: 600px;
+    max-width: 500px;
     margin: auto;
 }
 
 .menu-header {
     grid-column: span 2;
     text-align: center;
-    padding: 20px 0;
+    padding: 30px 0 10px 0;
 }
 
+/* تنسيق الأزرار (البطاقات) */
 .menu-card {
-    background-color: var(--primary-color);
+    background: var(--primary-color);
     color: white;
     border: none;
     border-radius: 15px;
-    padding: 25px 10px;
-    font-size: 18px;
+    padding: 20px 10px;
+    font-size: 17px;
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .menu-card:active {
     transform: scale(0.95);
 }
 
-.btn-library { background-color: #8e44ad; }
-.btn-prayer { background-color: #d35400; }
-.btn-qibla { background-color: #2980b9; }
+/* ألوان تمييز للأقسام الجديدة */
+.btn-prayer { background: #d35400 !important; } /* برتقالي للمواقيت */
+.btn-qibla { background: #2980b9 !important; }  /* أزرق للقبلة */
+.btn-library { 
+    background: #8e44ad !important; 
+    margin-top: 10px;
+} /* بنفسجي للمكتبة */
 
-.view-container { display: none; padding: 20px; max-width: 600px; margin: auto; }
-
-.header-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--card-bg);
+/* تنسيق عرض الأذكار */
+.view-container {
+    display: none;
     padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    max-width: 600px;
+    margin: auto;
 }
 
 .zekr-card {
     background: var(--card-bg);
-    padding: 20px;
-    border-radius: 12px;
+    padding: 25px;
+    border-radius: 18px;
     margin-bottom: 15px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    line-height: 1.8;
+    font-size: 20px;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    border-right: 5px solid var(--primary-color);
 }
 
-.count-circle {
+.zekr-card.completed {
+    opacity: 0.6;
+    border-right-color: #636e72;
+}
+
+/* شريط التنقل العلوي */
+.header-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    position: sticky;
+    top: 10px;
+    z-index: 100;
+}
+
+.nav-btn {
     background: var(--primary-color);
     color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
     font-weight: bold;
 }
- 
