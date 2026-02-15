@@ -93,3 +93,58 @@ function shareApp() {
         alert("تم نسخ رابط التطبيق، يمكنك إرساله الآن لأصدقائك.");
     }
 }
+// دالة جلب مواقيت الصلاة
+function getPrayerTimes() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            // رابط API لجلب المواقيت بناءً على موقعك
+            const url = `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lng}&method=5`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const times = data.data.timings;
+                    displayPrayerTimes(times);
+                })
+                .catch(err => alert("حدث خطأ في الاتصال بالمواقيت"));
+        }, () => {
+            alert("يرجى تفعيل الـ GPS في هاتفك لعرض المواقيت");
+        });
+    }
+}
+
+// دالة عرض المواقيت في الصفحة
+function displayPrayerTimes(times) {
+    const list = document.getElementById('azkar-list');
+    list.innerHTML = '';
+    
+    document.getElementById('home-view').style.display = 'none';
+    document.getElementById('section-view').style.display = 'block';
+    document.getElementById('section-title').innerText = 'مواقيت الصلاة';
+
+    const prayers = {
+        'Fajr': 'الفجر',
+        'Sunrise': 'الشروق',
+        'Dhuhr': 'الظهر',
+        'Asr': 'العصر',
+        'Maghrib': 'المغرب',
+        'Isha': 'العشاء'
+    };
+
+    for (let key in prayers) {
+        const card = document.createElement('div');
+        card.className = 'zekr-card';
+        card.style.display = 'flex';
+        card.style.justifyContent = 'space-between';
+        card.style.padding = '15px 25px';
+        
+        card.innerHTML = `
+            <span style="font-weight: bold;">${prayers[key]}</span>
+            <span style="color: var(--primary-color); font-weight: bold;">${times[key]}</span>
+        `;
+        list.appendChild(card);
+    }
+}
