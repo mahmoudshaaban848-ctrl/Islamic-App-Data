@@ -1,0 +1,16 @@
+{
+  "name": "المرجعية الإسلامية - الأذكار",
+  "short_name": "الأذكار",
+  "description": "تطبيق الأذكار اليومية الكاملة",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f4f7f9",
+  "theme_color": "#2c3e50",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2972/2972331.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
