@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق المرجعية الإسلامية - الأذكار الكاملة</title>
+    <title>تطبيق المرجعية الإسلامية</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2c3e50">
 </head>
 <body>
 
@@ -28,7 +30,8 @@
     <button class="menu-card btn-evening" onclick="openSection('evening')">أذكار المساء</button>
     <button class="menu-card btn-sleep" onclick="openSection('sleep')">أذكار النوم</button>
     <button class="menu-card btn-wake" onclick="openSection('wake')">أذكار الاستيقاظ</button>
-    <button class="menu-card btn-prayer" onclick="openSection('prayer')">أذكار ما بعد الصلاة</button>
+    <button class="menu-card btn-prayer" onclick="openSection('prayer')">أذكار بعد الصلاة</button>
+    <button class="menu-card" style="background: #34495e; grid-column: span 2; padding: 20px;" onclick="shareApp()">📤 مشاركة التطبيق</button>
 </div>
 
 <div id="section-view" class="view-container">
@@ -42,6 +45,13 @@
 
 <script src="data.js"></script>
 <script src="script.js"></script>
+<script>
+    // تفعيل العمل بدون إنترنت
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js');
+        });
+    }
+</script>
 </body>
 </html>
-
