@@ -31,7 +31,6 @@ function renderAzkar() {
         const storageKey = `zekr_${item.id}`;
         let saved = localStorage.getItem(storageKey);
         
-        // إذا لم يكن هناك قيمة محفوظة، نستخدم القيمة الأصلية
         if (saved === null) {
             saved = item.count;
         } else {
@@ -58,7 +57,6 @@ function renderAzkar() {
 function decrement(id, originalCount) {
     const storageKey = `zekr_${id}`;
     let current = localStorage.getItem(storageKey);
-    
     if (current === null) current = originalCount;
     current = parseInt(current);
 
@@ -66,28 +64,32 @@ function decrement(id, originalCount) {
         current--;
         localStorage.setItem(storageKey, current);
         renderAzkar();
-        
-        // اهتزاز بسيط عند الانتهاء (للموبايل)
-        if (current === 0 && window.navigator.vibrate) {
-            window.navigator.vibrate(50);
-        }
+        if (current === 0 && window.navigator.vibrate) window.navigator.vibrate(50);
     }
 }
 
-function showResetModal() {
-    document.getElementById('confirmModal').style.display = 'flex';
-}
-
-function closeModal() {
-    document.getElementById('confirmModal').style.display = 'none';
-}
+function showResetModal() { document.getElementById('confirmModal').style.display = 'flex'; }
+function closeModal() { document.getElementById('confirmModal').style.display = 'none'; }
 
 function executeReset() {
     if (activeSection && azkarData[activeSection]) {
-        azkarData[activeSection].forEach(item => {
-            localStorage.removeItem(`zekr_${item.id}`);
-        });
+        azkarData[activeSection].forEach(item => localStorage.removeItem(`zekr_${item.id}`));
         renderAzkar();
     }
     closeModal();
+}
+
+// دالة المشاركة برابط محمود شعبان الخاص
+function shareApp() {
+    const appUrl = 'https://mahmoudshaaban848-ctrl.github.io/Islamic-App-Data/';
+    if (navigator.share) {
+        navigator.share({
+            title: 'تطبيق المرجعية الإسلامية',
+            text: 'حصنك اليومي من الأذكار - تطبيق خفيف يعمل بدون إنترنت',
+            url: appUrl
+        });
+    } else {
+        navigator.clipboard.writeText(appUrl);
+        alert("تم نسخ رابط التطبيق، يمكنك إرساله الآن لأصدقائك.");
+    }
 }
