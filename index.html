@@ -46,12 +46,27 @@
 <script src="data.js"></script>
 <script src="script.js"></script>
 <script>
-    // تفعيل العمل بدون إنترنت
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js');
+    // تفعيل العمل بدون إنترن
+let newWorker;
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(reg => {
+            // كود مراقبة التحديثات
+            reg.addEventListener('updatefound', () => {
+                newWorker = reg.installing;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        // تظهر هذه الرسالة بمجرد تغييرك لـ v2 إلى v3 في ملف sw.js
+                        if (confirm("يوجد تحديث جديد للأذكار، هل تريد التحميل الآن؟")) {
+                            window.location.reload();
+                        }
+                    }
+                });
+            });
         });
-    }
+    });
+}
+
 </script>
 </body>
 </html>
