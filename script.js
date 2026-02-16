@@ -1,19 +1,25 @@
-let activeSection = '';
+/**
+ * تطبيق: المرجعية الإسلامية
+ * المبرمج: المرجعية الإسلامية
+ * الإصدار: 2.5.0 الشامل
+ */
 
+let activeSection = "";
+
+// --- 1. وظائف التنقل ---
 function openSection(section) {
     activeSection = section;
     document.getElementById('home-view').style.display = 'none';
     document.getElementById('section-view').style.display = 'block';
-    window.scrollTo(0,0);
+    document.getElementById('reset-nav-btn').style.display = 'block'; // إظهار زر التصفير للأذكار
     
     const titles = {
-        morning: 'أذكار الصباح',
-        evening: 'أذكار المساء',
-        sleep: 'أذكار النوم',
-        wake: 'أذكار الاستيقاظ',
-        prayer: 'أذكار ما بعد الصلاة'
+        'morning': 'أذكار الصباح',
+        'evening': 'أذكار المساء',
+        'sleep': 'أذكار النوم',
+        'wake': 'أذكار الاستيقاظ'
     };
-    document.getElementById('section-title').innerText = titles[section];
+    document.getElementById('section-title').innerText = titles[section] || "الأذكار";
     renderAzkar();
 }
 
@@ -22,184 +28,145 @@ function goHome() {
     document.getElementById('section-view').style.display = 'none';
 }
 
+// --- 2. محرك الأذكار ---
 function renderAzkar() {
     const list = document.getElementById('azkar-list');
     list.innerHTML = '';
-    const data = azkarData[activeSection];
+    const data = azkarData[activeSection] || [];
 
-    data.forEach(item => {
-        const storageKey = `zekr_${item.id}`;
-        let saved = localStorage.getItem(storageKey);
-        
-        if (saved === null) {
-            saved = item.count;
-        } else {
-            saved = parseInt(saved);
-        }
-
-        const isDone = saved === 0;
-        
+    data.forEach((item, index) => {
+        const savedCount = localStorage.getItem(`${activeSection}_${index}`) || item.count;
         const card = document.createElement('div');
-        card.className = `zekr-card ${isDone ? 'completed' : ''}`;
-        card.onclick = () => decrement(item.id, item.count);
+        card.className = `zekr-card ${savedCount == 0 ? 'completed' : ''}`;
         
         card.innerHTML = `
-            <span class="zekr-text">${item.text}</span>
-            <div class="counter-footer">
-                <span style="color: #64748b; font-weight: bold;">${isDone ? '✓ اكتمل الذكر' : 'المتبقي'}</span>
-                <div class="count-circle">${isDone ? '✓' : saved}</div>
+            <p style="font-size: 20px; line-height: 1.6;">${item.content}</p>
+            <div class="counter-box" onclick="decrement(${index}, ${item.count})">
+                <span style="font-size: 14px; opacity: 0.8;">اضغط للتسبيح:</span>
+                <div class="count-circle">${savedCount}</div>
             </div>
         `;
         list.appendChild(card);
     });
 }
 
-function decrement(id, originalCount) {
-    const storageKey = `zekr_${id}`;
-    let current = localStorage.getItem(storageKey);
-    if (current === null) current = originalCount;
-    current = parseInt(current);
-
+function decrement(index, originalCount) {
+    let current = parseInt(localStorage.getItem(`${activeSection}_${index}`) || originalCount);
     if (current > 0) {
         current--;
-        localStorage.setItem(storageKey, current);
-        renderAzkar();
-        if (current === 0 && window.navigator.vibrate) window.navigator.vibrate(50);
-    }
-}
-
-function showResetModal() { document.getElementById('confirmModal').style.display = 'flex'; }
-function closeModal() { document.getElementById('confirmModal').style.display = 'none'; }
-
-function executeReset() {
-    if (activeSection && azkarData[activeSection]) {
-        azkarData[activeSection].forEach(item => localStorage.removeItem(`zekr_${item.id}`));
+        localStorage.setItem(`${activeSection}_${index}`, current);
+        if (navigator.vibrate) navigator.vibrate(40);
         renderAzkar();
     }
-    closeModal();
 }
 
-// دالة المشاركة برابط محمود شعبان الخاص
-function shareApp() {
-    const appUrl = 'https://mahmoudshaaban848-ctrl.github.io/Islamic-App-Data/';
-    if (navigator.share) {
-        navigator.share({
-            title: 'تطبيق المرجعية الإسلامية',
-            text: 'حصنك اليومي من الأذكار - تطبيق خفيف يعمل بدون إنترنت',
-            url: appUrl
-        });
-    } else {
-        navigator.clipboard.writeText(appUrl);
-        alert("تم نسخ رابط التطبيق، يمكنك إرساله الآن لأصدقائك.");
-    }
-}
-// دالة جلب مواقيت الصلاة
+// --- 3. مواقيت الصلاة ---
 function getPrayerTimes() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
-            
-            // رابط API لجلب المواقيت بناءً على موقعك
-            const url = `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lng}&method=5`;
-            
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const times = data.data.timings;
-                    displayPrayerTimes(times);
-                })
-                .catch(err => alert("حدث خطأ في الاتصال بالمواقيت"));
-        }, () => {
-            alert("يرجى تفعيل الـ GPS في هاتفك لعرض المواقيت");
-        });
+            fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lng}&method=5`)
+                .then(res => res.json())
+                .then(data => displayPrayerTimes(data.data.timings));
+        }, () => alert("يرجى تفعيل الموقع (GPS) للمواقيت"));
     }
 }
 
-// دالة عرض المواقيت في الصفحة
 function displayPrayerTimes(times) {
     const list = document.getElementById('azkar-list');
     list.innerHTML = '';
-    
     document.getElementById('home-view').style.display = 'none';
     document.getElementById('section-view').style.display = 'block';
-    document.getElementById('section-title').innerText = 'مواقيت الصلاة';
+    document.getElementById('section-title').innerText = "مواقيت الصلاة";
+    document.getElementById('reset-nav-btn').style.display = 'none';
 
-    const prayers = {
-        'Fajr': 'الفجر',
-        'Sunrise': 'الشروق',
-        'Dhuhr': 'الظهر',
-        'Asr': 'العصر',
-        'Maghrib': 'المغرب',
-        'Isha': 'العشاء'
-    };
-
+    const prayers = { 'Fajr': 'الفجر', 'Sunrise': 'الشروق', 'Dhuhr': 'الظهر', 'Asr': 'العصر', 'Maghrib': 'المغرب', 'Isha': 'العشاء' };
     for (let key in prayers) {
         const card = document.createElement('div');
         card.className = 'zekr-card';
         card.style.display = 'flex';
         card.style.justifyContent = 'space-between';
-        card.style.padding = '15px 25px';
-        
-        card.innerHTML = `
-            <span style="font-weight: bold;">${prayers[key]}</span>
-            <span style="color: var(--primary-color); font-weight: bold;">${times[key]}</span>
-        `;
+        card.innerHTML = `<b>${prayers[key]}</b> <span style="color:var(--primary-color)">${times[key]}</span>`;
         list.appendChild(card);
     }
-// دالة المكتبة الإسلامية الشاملة - الإصدار الموسوعي الضخم
+}
+
+// --- 4. بوصلة القبلة ---
+function getQibla() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            const kLat = 21.4225, kLng = 39.8262;
+            const y = Math.sin((kLng - lng) * Math.PI / 180);
+            const x = Math.cos(lat * Math.PI / 180) * Math.tan(kLat * Math.PI / 180) - 
+                      Math.sin(lat * Math.PI / 180) * Math.cos((kLng - lng) * Math.PI / 180);
+            let qibla = Math.atan2(y, x) * 180 / Math.PI;
+            qibla = (qibla + 360) % 360;
+            
+            const list = document.getElementById('azkar-list');
+            list.innerHTML = `<div class="zekr-card" style="text-align:center">
+                <h2>🧭 اتجاه القبلة</h2>
+                <p style="font-size: 24px;">${Math.round(qibla)}° درجة</p>
+                <p>وجه هاتفك بحيث تكون الدرجة هي اتجاه الكعبة المشرفة</p>
+            </div>`;
+            document.getElementById('home-view').style.display = 'none';
+            document.getElementById('section-view').style.display = 'block';
+            document.getElementById('section-title').innerText = "بوصلة القبلة";
+            document.getElementById('reset-nav-btn').style.display = 'none';
+        });
+    }
+}
+
+// --- 5. المكتبة الشاملة ---
 function openLibrary() {
     const list = document.getElementById('azkar-list');
-    list.innerHTML = ''; 
-    
+    list.innerHTML = '';
     document.getElementById('home-view').style.display = 'none';
     document.getElementById('section-view').style.display = 'block';
-    document.getElementById('section-title').innerText = 'المكتبة المرجعية الشاملة';
+    document.getElementById('section-title').innerText = "المكتبة العلمية الموثوقة";
+    document.getElementById('reset-nav-btn').style.display = 'none';
 
-    // قائمة الكتب الموسعة (السنة، التفسير، العقيدة، الفقه، السيرة)
     const books = [
-        // دواوين السنة
-        { name: "صحيح البخاري", author: "الإمام البخاري", url: "https://ia800204.us.archive.org/17/items/waq1551/1551.pdf" },
-        { name: "صحيح مسلم", author: "الإمام مسلم", url: "https://ia801301.us.archive.org/21/items/ssmuslim/ssmuslim.pdf" },
-        { name: "موطأ الإمام مالك", author: "الإمام مالك بن أنس", url: "https://ia800201.us.archive.org/24/items/waq1574/1574.pdf" },
-        { name: "مسند الإمام أحمد", author: "الإمام أحمد بن حنبل", url: "https://ia800205.us.archive.org/5/items/waqmsand/msand01.pdf" },
-        { name: "سنن أبي داود", author: "الإمام أبو داود", url: "https://ia800204.us.archive.org/15/items/waq4937/4937.pdf" },
-        { name: "سنن الترمذي", author: "الإمام الترمذي", url: "https://ia800203.us.archive.org/11/items/waq2517/2517.pdf" },
-        
-        // التفسير وعلوم القرآن
-        { name: "تفسير القرآن العظيم", author: "الإمام ابن كثير", url: "https://ia800201.us.archive.org/17/items/waq3595/3595_01.pdf" },
-        { name: "تيسير الكريم الرحمن", author: "الشيخ عبد الرحمن السعدي", url: "https://ia800201.us.archive.org/3/items/waq63750/63750.pdf" },
-        { name: "تفسير الجلالين", author: "السيوطي والمحلي", url: "https://ia800205.us.archive.org/11/items/waq14681/14681.pdf" },
-
-        // شروح ومؤلفات منوعة
-        { name: "فتح الباري شرح البخاري", author: "ابن حجر العسقلاني", url: "https://ia800201.us.archive.org/18/items/waq2871/01_2871.pdf" },
-        { name: "رياض الصالحين", author: "الإمام النووي", url: "https://ia800701.us.archive.org/18/items/waq41940/41940.pdf" },
-        { name: "شرح الأربعين النووية", author: "الشيخ ابن عثيمين", url: "https://ia800205.us.archive.org/10/items/waq43445/43445.pdf" },
-        { name: "عقيدة أهل السنة والجماعة", author: "الشيخ ابن عثيمين", url: "https://ia800203.us.archive.org/15/items/waq21238/21238.pdf" },
-        { name: "فتاوى العقيدة", author: "الشيخ ابن باز", url: "https://ia800204.us.archive.org/3/items/waq83324/83324.pdf" },
-        { name: "صفة صلاة النبي", author: "الشيخ ناصر الدين الألباني", url: "https://ia800204.us.archive.org/15/items/waq22862/22862.pdf" },
-        { name: "كتاب التوحيد", author: "الإمام محمد بن عبدالوهاب", url: "https://ia800205.us.archive.org/14/items/waq15077/15077.pdf" },
-        { name: "الرحيق المختوم (سيرة)", author: "صفي الرحمن المباركفوري", url: "https://ia800202.us.archive.org/4/items/waq21035/21035.pdf" },
-        { name: "الآداب الشرعية", author: "ابن مفلح المقدسي", url: "https://ia800201.us.archive.org/1/items/waq18290/18290.pdf" }
+        { n: "صحيح البخاري", a: "الإمام البخاري", u: "https://ia800204.us.archive.org/17/items/waq1551/1551.pdf" },
+        { n: "صحيح مسلم", a: "الإمام مسلم", u: "https://ia801301.us.archive.org/21/items/ssmuslim/ssmuslim.pdf" },
+        { n: "موطأ الإمام مالك", a: "الإمام مالك", u: "https://ia800201.us.archive.org/24/items/waq1574/1574.pdf" },
+        { n: "مسند الإمام أحمد", a: "أحمد بن حنبل", u: "https://ia800205.us.archive.org/5/items/waqmsand/msand01.pdf" },
+        { n: "تفسير ابن كثير", a: "ابن كثير", u: "https://ia800201.us.archive.org/17/items/waq3595/3595_01.pdf" },
+        { n: "تفسير السعدي", a: "الشيخ السعدي", u: "https://ia800201.us.archive.org/3/items/waq63750/63750.pdf" },
+        { n: "رياض الصالحين", a: "الإمام النووي", u: "https://ia800701.us.archive.org/18/items/waq41940/41940.pdf" },
+        { n: "شرح الأربعين النووية", a: "ابن عثيمين", u: "https://ia800205.us.archive.org/10/items/waq43445/43445.pdf" },
+        { n: "فتاوى العقيدة", a: "ابن باز", u: "https://ia800204.us.archive.org/3/items/waq83324/83324.pdf" },
+        { n: "صفة صلاة النبي", a: "الألباني", u: "https://ia800204.us.archive.org/15/items/waq22862/22862.pdf" }
     ];
 
-    // عرض الكتب في الواجهة
     books.forEach(book => {
         const card = document.createElement('div');
         card.className = 'zekr-card';
         card.style.cursor = 'pointer';
-        card.style.textAlign = 'right';
-        card.style.borderRight = '5px solid #8e44ad';
-        
-        card.onclick = () => window.open(book.url, '_blank');
-        
-        card.innerHTML = `
-            <div style="display: flex; flex-direction: column; gap: 4px;">
-                <span style="font-weight: bold; font-size: 18px; color: var(--primary-color);">📖 ${book.name}</span>
-                <span style="color: #636e72; font-size: 13px;">المؤلف: ${book.author}</span>
-                <span style="color: #8e44ad; font-size: 11px; font-weight: bold;">اضغط لفتح المرجع PDF</span>
-            </div>
-        `;
+        card.style.borderRight = "5px solid var(--primary-color)";
+        card.onclick = () => window.open(book.u, '_blank');
+        card.innerHTML = `<div style="text-align:right"><b>📖 ${book.n}</b><br><small>المؤلف: ${book.a}</small></div>`;
         list.appendChild(card);
     });
+}
+
+// --- 6. وظائف إضافية ---
+function shareApp() {
+    const text = 'تطبيق المرجعية الإسلامية: أذكار، مواقيت، ومكتبة شاملة موثوقة.';
+    if (navigator.share) {
+        navigator.share({ title: 'المرجعية الإسلامية', text: text, url: window.location.href });
+    } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert("تم نسخ رابط التطبيق بنجاح");
+    }
+}
+function showResetModal() { document.getElementById('confirmModal').style.display = 'flex'; }
+function closeModal() { document.getElementById('confirmModal').style.display = 'none'; }
+function executeReset() {
+    const data = azkarData[activeSection] || [];
+    data.forEach((_, i) => localStorage.removeItem(`${activeSection}_${i}`));
+    closeModal();
+    renderAzkar();
 }
