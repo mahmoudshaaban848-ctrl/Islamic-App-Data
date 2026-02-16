@@ -3,78 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق المرجعية الإسلامية</title>
+    <title>المرجعية الإسلامية</title>
+
+    <!-- خط Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Manifest -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1e5631">
-    <style>
-        /* إخفاء العناصر قبل التحميل لمنع التداخل */
-        .modal-overlay, .view-container { display: none; }
-    </style>
+
+    <meta name="theme-color" content="#1B5E20">
 </head>
+
 <body>
 
-<div id="confirmModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3>إعادة ضبط العدادات</h3>
-        <p>هل أنت متأكد من تصفير أذكار هذا القسم؟</p>
-        <div class="modal-btns">
-            <button class="confirm-ok" onclick="executeReset()">تصفير الآن</button>
-            <button class="confirm-cancel" onclick="closeModal()">إلغاء</button>
+    <!-- ================================
+         الصفحة الرئيسية
+    ================================= -->
+    <div id="home-view">
+
+        <div class="app-title">المرجعية الإسلامية</div>
+
+        <div id="daily-tip"></div>
+
+        <button class="menu-button" onclick="openSection('morning')">
+            أذكار الصباح
+        </button>
+
+        <button class="menu-button" onclick="openSection('evening')">
+            أذكار المساء
+        </button>
+
+        <button class="menu-button" onclick="openSection('sleep')">
+            أذكار النوم
+        </button>
+
+        <button class="menu-button" onclick="openSection('wake')">
+            أذكار الاستيقاظ
+        </button>
+
+        <button class="menu-button" onclick="openSection('after_prayer')">
+            أذكار بعد الصلاة
+        </button>
+
+        <button class="menu-button" onclick="shareApp()">
+            مشاركة التطبيق
+        </button>
+
+    </div>
+
+
+    <!-- ================================
+         صفحة عرض الأذكار
+    ================================= -->
+    <div id="section-view">
+
+        <div class="top-buttons">
+            <button onclick="goHome()">⬅ الرئيسية</button>
+            <button id="reset-nav-btn" onclick="showResetModal()" style="display:none;">
+                إعادة التصفير
+            </button>
+        </div>
+
+        <h2 id="section-title"></h2>
+
+        <div id="azkar-list"></div>
+
+    </div>
+
+
+    <!-- ================================
+         نافذة تأكيد إعادة التصفير
+    ================================= -->
+    <div id="confirmModal">
+        <div class="modal-content">
+            <p>هل تريد إعادة تصفير العدادات؟</p>
+            <button class="confirm" onclick="executeReset()">نعم</button>
+            <button class="cancel" onclick="closeModal()">إلغاء</button>
         </div>
     </div>
-</div>
 
-<div id="home-view" class="main-menu">
-    <div class="menu-header">
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 10px;">
-            <button id="theme-btn" onclick="toggleTheme()" style="background:none; border:none; font-size: 26px; cursor: pointer;">🌙</button>
-            <h1 style="margin:0;">المرجعية الإسلامية</h1>
-            <div style="width:30px;"></div> 
-        </div>
-        <p style="color: #c5a059; margin-top: 5px; font-weight: bold;">دليلك الشرعي وحصنك اليومي</p>
-    </div>
-    
-    <button class="menu-card" onclick="openSection('morning')">🌅 أذكار الصباح</button>
-    <button class="menu-card" onclick="openSection('evening')">🌆 أذكار المساء</button>
-    <button class="menu-card" onclick="openSection('sleep')">🌙 أذكار النوم</button>
-    <button class="menu-card" onclick="openSection('wake')">☀️ أذكار الاستيقاظ</button>
-    <button class="menu-card" style="grid-column: span 2; background: #1e5631; color: #c5a059;" onclick="openSection('after_prayer')">🟢 أذكار بعد الصلاة</button>
-    
-    <button class="menu-card btn-prayer" onclick="getPrayerTimes()">🕌 مواقيت الصلاة</button>
-    <button class="menu-card btn-qibla" onclick="getQibla()">🧭 اتجاه القبلة</button>
-    <button class="menu-card btn-library" style="grid-column: span 2;" onclick="openLibrary()">📚 المكتبة الإسلامية الشاملة</button>
-    
-    <button class="menu-card" style="background: #2c3e50; grid-column: span 2; color: white;" onclick="shareApp()">📤 مشاركة التطبيق</button>
-    
-    <div id="daily-tip" class="daily-tip-box"></div>
-</div>
 
-<div id="section-view" class="view-container">
-    <div class="header-nav">
-        <button class="nav-btn" onclick="goHome()">🏠 القائمة</button>
-        <h3 id="section-title" style="margin:0; font-size: 18px; color: #c5a059;"></h3>
-        <button id="reset-nav-btn" class="nav-btn reset-btn" onclick="showResetModal()">🔄 تصفير</button>
-    </div>
-    <div id="azkar-list"></div>
-</div>
-
-<script src="data.js"></script>
-<script src="script.js"></script>
-
-<script>
-// الوضع الليلي السريع
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    document.getElementById('theme-btn').innerText = isDark ? '☀️' : '🌙';
-}
-if (localStorage.getItem('theme') === 'dark') {
-    document.body.classList.add('dark-mode');
-    document.getElementById('theme-btn').innerText = '☀️';
-}
-</script>
+    <!-- ================================
+         JS Files
+    ================================= -->
+    <script src="data.js"></script>
+    <script src="script.js"></script>
 
 </body>
 </html>
