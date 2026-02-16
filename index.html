@@ -6,7 +6,11 @@
     <title>تطبيق المرجعية الإسلامية</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2c5e50">
+    <meta name="theme-color" content="#1e5631">
+    <style>
+        /* إخفاء العناصر قبل التحميل لمنع التداخل */
+        .modal-overlay, .view-container { display: none; }
+    </style>
 </head>
 <body>
 
@@ -25,28 +29,31 @@
     <div class="menu-header">
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 10px;">
             <button id="theme-btn" onclick="toggleTheme()" style="background:none; border:none; font-size: 26px; cursor: pointer;">🌙</button>
-            <h1 style="margin:0; color: var(--primary-color); font-size: 24px;">المرجعية الإسلامية</h1>
+            <h1 style="margin:0;">المرجعية الإسلامية</h1>
             <div style="width:30px;"></div> 
         </div>
-        <p style="color: #636e72; margin-top: 5px;">دليلك الشرعي وحصنك اليومي</p>
+        <p style="color: #c5a059; margin-top: 5px; font-weight: bold;">دليلك الشرعي وحصنك اليومي</p>
     </div>
     
     <button class="menu-card" onclick="openSection('morning')">🌅 أذكار الصباح</button>
     <button class="menu-card" onclick="openSection('evening')">🌆 أذكار المساء</button>
     <button class="menu-card" onclick="openSection('sleep')">🌙 أذكار النوم</button>
     <button class="menu-card" onclick="openSection('wake')">☀️ أذكار الاستيقاظ</button>
+    <button class="menu-card" style="grid-column: span 2; background: #1e5631; color: #c5a059;" onclick="openSection('after_prayer')">🟢 أذكار بعد الصلاة</button>
     
     <button class="menu-card btn-prayer" onclick="getPrayerTimes()">🕌 مواقيت الصلاة</button>
     <button class="menu-card btn-qibla" onclick="getQibla()">🧭 اتجاه القبلة</button>
     <button class="menu-card btn-library" style="grid-column: span 2;" onclick="openLibrary()">📚 المكتبة الإسلامية الشاملة</button>
     
-    <button class="menu-card" style="background: #34495e; grid-column: span 2;" onclick="shareApp()">📤 مشاركة التطبيق</button>
+    <button class="menu-card" style="background: #2c3e50; grid-column: span 2; color: white;" onclick="shareApp()">📤 مشاركة التطبيق</button>
+    
+    <div id="daily-tip" class="daily-tip-box"></div>
 </div>
 
 <div id="section-view" class="view-container">
     <div class="header-nav">
         <button class="nav-btn" onclick="goHome()">🏠 القائمة</button>
-        <h3 id="section-title" style="margin:0; font-size: 18px;"></h3>
+        <h3 id="section-title" style="margin:0; font-size: 18px; color: #c5a059;"></h3>
         <button id="reset-nav-btn" class="nav-btn reset-btn" onclick="showResetModal()">🔄 تصفير</button>
     </div>
     <div id="azkar-list"></div>
@@ -56,7 +63,7 @@
 <script src="script.js"></script>
 
 <script>
-// كود تشغيل الوضع الليلي وتحديث PWA
+// الوضع الليلي السريع
 function toggleTheme() {
     document.body.classList.toggle('dark-mode');
     const isDark = document.body.classList.contains('dark-mode');
