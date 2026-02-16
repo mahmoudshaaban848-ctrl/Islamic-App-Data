@@ -1,12 +1,14 @@
 /**
  * تطبيق: المرجعية الإسلامية
- * المبرمج: المرجعية الإسلامية
- * النسخة: 3.0 (الإصدار الذهبي)
+ * الإصدار: 4.0 (نسخة الأداء المحسن)
  */
 
 let activeSection = "";
+let currentData = [];
 
-// 1. نظام نصيحة اليوم العشوائية
+/* ================================
+   1️⃣ نصيحة اليوم
+================================ */
 const dailyWisdom = [
     "قال ﷺ: (بلغوا عني ولو آية)",
     "الاستغفار يفتح الأقفال ويشرح البال.",
@@ -17,31 +19,43 @@ const dailyWisdom = [
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
-    // عرض نصيحة عشوائية عند التحميل
+
     const tipBox = document.getElementById('daily-tip');
-    if(tipBox) {
+    if (tipBox) {
         const randomTip = dailyWisdom[Math.floor(Math.random() * dailyWisdom.length)];
-        tipBox.innerHTML = `💡 <b>فائدة اليوم:</b> <br> ${randomTip}`;
+        tipBox.innerHTML = `💡 <b>فائدة اليوم:</b><br>${randomTip}`;
     }
+
 });
 
-// 2. التنقل بين الصفحات
+
+/* ================================
+   2️⃣ التنقل بين الصفحات
+================================ */
 function openSection(section) {
+
     activeSection = section;
+
     document.getElementById('home-view').style.display = 'none';
     document.getElementById('section-view').style.display = 'block';
-    
-    // إخفاء زر التصفير في غير الأذكار
+
     const isZekr = ['morning','evening','sleep','wake','after_prayer'].includes(section);
     document.getElementById('reset-nav-btn').style.display = isZekr ? 'block' : 'none';
 
     const titles = {
-        'morning': 'أذكار الصباح', 'evening': 'أذكار المساء', 
-        'sleep': 'أذكار النوم', 'wake': 'أذكار الاستيقاظ',
+        'morning': 'أذكار الصباح',
+        'evening': 'أذكار المساء',
+        'sleep': 'أذكار النوم',
+        'wake': 'أذكار الاستيقاظ',
         'after_prayer': 'أذكار بعد الصلاة'
     };
+
     document.getElementById('section-title').innerText = titles[section] || "المحتوى";
-    renderAzkar();
+
+    if (isZekr) {
+        currentData = azkarData[activeSection] || [];
+        renderAzkar();
+    }
 }
 
 function goHome() {
@@ -49,128 +63,136 @@ function goHome() {
     document.getElementById('section-view').style.display = 'none';
 }
 
-// 3. محرك الأذكار والعدادات
+
+/* ================================
+   3️⃣ عرض الأذكار (محسن)
+================================ */
 function renderAzkar() {
+
     const list = document.getElementById('azkar-list');
     list.innerHTML = '';
-    const data = azkarData[activeSection] || [];
 
-    data.forEach((item, index) => {
-        const text = item.content || item.text || item.zekr || "نص غير متوفر";
-        const total = item.count || item.repeat || 1;
-        const current = localStorage.getItem(`${activeSection}_${index}`) || total;
-        
+    currentData.forEach((item, index) => {
+
+        const text = item.text;
+        const total = item.count || 1;
+        const saved = parseInt(localStorage.getItem(`${activeSection}_${index}`));
+        const current = isNaN(saved) ? total : saved;
+
         const card = document.createElement('div');
-        card.className = `zekr-card ${current == 0 ? 'completed' : ''}`;
+        card.className = 'zekr-card';
+        if (current === 0) card.classList.add('completed');
+
         card.innerHTML = `
-            <p>${text}</p>
-            <div class="counter-box" onclick="decrement(${index}, ${total})">
-                <span>المتبقي:</span>
-                <div class="count-circle">${current}</div>
+            <p class="zekr-text">${text}</p>
+
+            <div class="counter-wrapper">
+                <div class="counter-info">
+                    <span>المتبقي</span>
+                </div>
+
+                <div class="counter-circle ${current === 0 ? 'done' : ''}" 
+                     data-index="${index}" 
+                     data-total="${total}">
+                    ${current}
+                </div>
             </div>
         `;
+
         list.appendChild(card);
     });
+
+    attachCounters();
 }
 
-function decrement(index, total) {
-    let current = parseInt(localStorage.getItem(`${activeSection}_${index}`) || total);
-    if (current > 0) {
-        current--;
-        localStorage.setItem(`${activeSection}_${index}`, current);
-        if (navigator.vibrate) navigator.vibrate(40);
-        renderAzkar();
-    }
-}
 
-// 4. مواقيت الصلاة (تحويل 12 ساعة)
-function tConvert(time) {
-    let [h, m] = time.split(':');
-    h = parseInt(h);
-    let ampm = h >= 12 ? 'م' : 'ص';
-    h = h % 12 || 12;
-    return `${h}:${m} ${ampm}`;
-}
+/* ================================
+   4️⃣ نظام العداد الذكي
+================================ */
+function attachCounters() {
 
-function getPrayerTimes() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(pos => {
-            fetch(`https://api.aladhan.com/v1/timings?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&method=5`)
-                .then(r => r.json())
-                .then(res => {
-                    const t = res.data.timings;
-                    const list = document.getElementById('azkar-list');
-                    list.innerHTML = '';
-                    openSection('prayers');
-                    document.getElementById('section-title').innerText = "مواقيت الصلاة اليوم";
-                    
-                    const pNames = {'Fajr':'الفجر', 'Sunrise':'الشروق', 'Dhuhr':'الظهر', 'Asr':'العصر', 'Maghrib':'المغرب', 'Isha':'العشاء'};
-                    for(let k in pNames) {
-                        const c = document.createElement('div');
-                        c.className = 'zekr-card';
-                        c.style.display = 'flex'; c.style.justifyContent = 'space-between';
-                        c.innerHTML = `<b>${pNames[k]}</b> <span style="color:#1e5631">${tConvert(t[k])}</span>`;
-                        list.appendChild(c);
-                    }
-                });
-        }, () => alert("يرجى تفعيل الموقع (GPS)"));
-    }
-}
+    document.querySelectorAll('.counter-circle').forEach(circle => {
 
-// 5. القبلة والمكتبة
-function getQibla() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(pos => {
-            const lat = pos.coords.latitude, lng = pos.coords.longitude;
-            const kLat = 21.4225, kLng = 39.8262;
-            const y = Math.sin((kLng - lng) * Math.PI / 180);
-            const x = Math.cos(lat * Math.PI / 180) * Math.tan(kLat * Math.PI / 180) - Math.sin(lat * Math.PI / 180) * Math.cos((kLng - lng) * Math.PI / 180);
-            let q = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
-            
-            openSection('qibla');
-            document.getElementById('section-title').innerText = "اتجاه القبلة";
-            document.getElementById('azkar-list').innerHTML = `
-                <div class="zekr-card" style="text-align:center">
-                    <h2 style="color:#1e5631">${Math.round(q)}° درجة</h2>
-                    <p>انحراف القبلة من اتجاه الشمال بموقعك الحالي.</p>
-                    <a href="https://qiblafinder.withgoogle.com/" target="_blank" class="nav-btn" style="display:block; text-decoration:none; margin-top:15px; background:#1e5631; color:white;">افتح بوصلة جوجل الحية</a>
-                </div>`;
+        circle.addEventListener('click', function () {
+
+            const index = this.dataset.index;
+            const total = parseInt(this.dataset.total);
+
+            let current = parseInt(localStorage.getItem(`${activeSection}_${index}`));
+            current = isNaN(current) ? total : current;
+
+            if (current > 0) {
+                current--;
+
+                localStorage.setItem(`${activeSection}_${index}`, current);
+
+                this.innerText = current;
+
+                if (navigator.vibrate) navigator.vibrate(30);
+
+                if (current === 0) {
+                    this.classList.add('done');
+                    this.closest('.zekr-card').classList.add('completed');
+                    animateCompletion(this);
+                }
+            }
+
         });
-    }
-}
 
-function openLibrary() {
-    openSection('library');
-    document.getElementById('section-title').innerText = "المكتبة الإسلامية";
-    const books = [
-        { n: "صحيح البخاري", a: "البخاري", u: "https://ia800204.us.archive.org/17/items/waq1551/1551.pdf" },
-        { n: "صحيح مسلم", a: "مسلم", u: "https://ia801301.us.archive.org/21/items/ssmuslim/ssmuslim.pdf" },
-        { n: "تفسير ابن كثير", a: "ابن كثير", u: "https://ia800201.us.archive.org/17/items/waq3595/3595_01.pdf" },
-        { n: "رياض الصالحين", a: "النووي", u: "https://ia800701.us.archive.org/18/items/waq41940/41940.pdf" },
-        { n: "تفسير السعدي", a: "السعدي", u: "https://ia800201.us.archive.org/3/items/waq63750/63750.pdf" }
-    ];
-    const list = document.getElementById('azkar-list');
-    books.forEach(b => {
-        const c = document.createElement('a');
-        c.href = b.u; c.target = "_blank"; c.className = 'zekr-card';
-        c.style = "display:block; text-decoration:none; color:inherit; border-right:5px solid #c5a059;";
-        c.innerHTML = `<b>📖 ${b.n}</b> <br><small>المؤلف: ${b.a}</small>`;
-        list.appendChild(c);
     });
 }
 
-// 6. وظائف عامة
-function shareApp() {
-    const text = 'تطبيق المرجعية الإسلامية: أذكار ومكتبة ومواقيت في تطبيق واحد.';
-    if (navigator.share) navigator.share({ title: 'المرجعية الإسلامية', text: text, url: window.location.href });
-    else { navigator.clipboard.writeText(window.location.href); alert("تم نسخ رابط التطبيق"); }
+
+/* ================================
+   5️⃣ أنيميشن عند الاكتمال
+================================ */
+function animateCompletion(element) {
+
+    element.style.transform = "scale(1.2)";
+    setTimeout(() => {
+        element.style.transform = "scale(1)";
+    }, 200);
 }
 
-function showResetModal() { document.getElementById('confirmModal').style.display = 'flex'; }
-function closeModal() { document.getElementById('confirmModal').style.display = 'none'; }
+
+/* ================================
+   6️⃣ إعادة التصفير
+================================ */
+function showResetModal() {
+    document.getElementById('confirmModal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('confirmModal').style.display = 'none';
+}
+
 function executeReset() {
-    const data = azkarData[activeSection] || [];
-    data.forEach((_, i) => localStorage.removeItem(`${activeSection}_${i}`));
+
+    currentData.forEach((_, i) => {
+        localStorage.removeItem(`${activeSection}_${i}`);
+    });
+
     closeModal();
     renderAzkar();
+}
+
+
+/* ================================
+   7️⃣ مشاركة التطبيق
+================================ */
+function shareApp() {
+
+    const text = 'تطبيق المرجعية الإسلامية: أذكار ومكتبة ومواقيت في تطبيق واحد.';
+
+    if (navigator.share) {
+        navigator.share({
+            title: 'المرجعية الإسلامية',
+            text: text,
+            url: window.location.href
+        });
+    } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert("تم نسخ رابط التطبيق");
+    }
+
 }
