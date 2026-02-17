@@ -1,235 +1,187 @@
-/* ================================
-   المرجعية الإسلامية
-   Style v4.0 - تصميم احترافي عصري
+/* ===============================
+   المرجعية الإسلامية 5.0
+   تصميم احترافي شامل
 ================================ */
 
 :root {
     --primary: #1B5E20;
     --primary-light: #2E7D32;
-    --background: #F4F6F8;
-    --white: #ffffff;
-    --gray: #6c757d;
-    --shadow: 0 4px 12px rgba(0,0,0,0.05);
+    --bg: #F4F6F8;
+    --card: #ffffff;
+    --text: #222;
+    --muted: #666;
     --radius: 14px;
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Cairo', sans-serif;
+    --shadow: 0 4px 12px rgba(0,0,0,0.06);
 }
 
 body {
-    background: var(--background);
-    color: #222;
+    margin: 0;
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: 0.3s ease;
+}
+
+/* 🔷 الوضع الليلي */
+body.dark-mode {
+    --bg: #121212;
+    --card: #1E1E1E;
+    --text: #f1f1f1;
+    --muted: #aaa;
+}
+
+/* 🔷 HEADER */
+.app-header {
+    background: var(--primary);
+    color: white;
+    padding: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.header-actions button {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+}
+
+/* 🔷 MAIN */
+main {
     padding: 15px;
 }
 
-/* ================================
-   الصفحة الرئيسية
-================================ */
+.view {
+    display: none;
+}
 
-#home-view {
+.active-view {
+    display: block;
+}
+
+/* 🔷 الصفحة الرئيسية */
+.home-grid {
     display: grid;
     gap: 15px;
 }
 
-.app-title {
+.home-grid button {
+    background: var(--card);
+    border: none;
+    padding: 18px;
+    border-radius: var(--radius);
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: 0.3s ease;
+}
+
+.home-grid button:hover {
+    background: var(--primary-light);
+    color: white;
+}
+
+/* 🔷 عنوان الصفحة */
+.view-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.view-header button {
+    background: var(--primary);
+    border: none;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.view-header h2 {
+    margin: 0;
+}
+
+/* 🔷 البطاقات العامة */
+.card {
+    background: var(--card);
+    padding: 15px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
+    line-height: 1.8;
+}
+
+/* 🔷 التسبيح */
+.tasbeeh-container {
     text-align: center;
-    font-size: 24px;
+    margin-top: 30px;
+}
+
+#tasbeeh-counter {
+    font-size: 50px;
     font-weight: bold;
-    color: var(--primary);
+    margin-bottom: 20px;
+}
+
+.tasbeeh-container button {
+    background: var(--primary);
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+/* 🔷 الإعدادات */
+.settings-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card);
+    padding: 12px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
     margin-bottom: 10px;
 }
 
-.menu-button {
-    background: var(--white);
+/* 🔷 البحث */
+#search-input {
+    width: 100%;
+    padding: 12px;
     border-radius: var(--radius);
-    padding: 18px;
-    text-align: center;
-    font-size: 18px;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-    transition: 0.3s ease;
-    border: none;
-}
-
-.menu-button:hover {
-    transform: translateY(-3px);
-    background: var(--primary-light);
-    color: white;
-}
-
-/* ================================
-   نصيحة اليوم
-================================ */
-
-#daily-tip {
-    background: var(--white);
-    padding: 15px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    font-size: 15px;
-    line-height: 1.6;
-}
-
-/* ================================
-   صفحة الأذكار
-================================ */
-
-#section-view {
-    display: none;
-}
-
-#section-title {
-    text-align: center;
-    font-size: 20px;
+    border: 1px solid #ccc;
     margin-bottom: 15px;
-    color: var(--primary);
 }
 
-#azkar-list {
+/* 🔷 مواقيت الصلاة */
+#prayer-times {
     display: grid;
-    gap: 15px;
+    gap: 10px;
 }
 
-/* ================================
-   بطاقة الذكر
-================================ */
-
-.zekr-card {
-    background: var(--white);
-    padding: 18px;
+.prayer-card {
+    background: var(--card);
+    padding: 12px;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    transition: 0.3s ease;
-}
-
-.zekr-card.completed {
-    opacity: 0.7;
-}
-
-.zekr-text {
-    font-size: 17px;
-    line-height: 1.9;
-    margin-bottom: 15px;
-    text-align: right;
-}
-
-/* ================================
-   العداد
-================================ */
-
-.counter-wrapper {
     display: flex;
     justify-content: space-between;
-    align-items: center;
 }
 
-.counter-info span {
-    font-size: 14px;
-    color: var(--gray);
-}
-
-.counter-circle {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.counter-circle:hover {
-    transform: scale(1.05);
-}
-
-.counter-circle.done {
-    background: #4CAF50;
-}
-
-/* ================================
-   الأزرار العلوية
-================================ */
-
-.top-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-}
-
-.top-buttons button {
-    background: var(--primary);
-    border: none;
-    color: white;
-    padding: 10px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.top-buttons button:hover {
-    background: var(--primary-light);
-}
-
-/* ================================
-   نافذة التأكيد
-================================ */
-
-#confirmModal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.5);
-    display: none;
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: var(--radius);
-    width: 90%;
-    max-width: 300px;
+/* 🔷 FOOTER */
+.app-footer {
     text-align: center;
-}
-
-.modal-content button {
-    margin-top: 10px;
-    padding: 8px 12px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.modal-content .confirm {
-    background: #d32f2f;
-    color: white;
-}
-
-.modal-content .cancel {
-    background: #ccc;
-}
-
-/* ================================
-   استجابة الموبايل
-================================ */
-
-@media (min-width: 600px) {
-
-    #home-view {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
+    padding: 12px;
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 20px;
 }
