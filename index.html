@@ -33,146 +33,7 @@
 
             <div class="home-grid">
 
-                <button onclick="App.openView('azkar')">📿 الأذكار</button>
-                <button onclick="App.openView('hadith')">📖 الأربعون النووية</button>
-                <button onclick="App.openView('library')">📚 المكتبة</button>
-                <button onclick="App.openView('tasbeeh')">📿 تسبيح</button>
-                <button onclick="App.openView('prayer')">🕌 مواقيت الصلاة</button>
-                <button onclick="App.openView('favorites')">⭐ المفضلة</button>
-
-            </div>
-
-        </section>
-
-
-        <!-- 🟢 صفحة الأذكار -->
-        <section id="azkar-view" class="view">
-            <div class="view-header">
-                <button onclick="App.goHome()">⬅</button>
-                <h2>الأذكار</h2>
-            </div>
-
-            <div id="azkar-categories"></div>
-            <div id="azkar-content"></div>
-        </section>
-
-
-        <!-- 🟢 صفحة الأربعون النووية -->
-        <section id="hadith-view" class="view">
-            <div class="view-header">
-                <button onclick="App.goHome()">⬅</button>
-                <h2>الأربعون النووية</h2>
-            </div>
-
-            <div id="hadith-list"></div>
-        </section>
-
-
-        <!-- 🟢 صفحة المكتبة -->
-        <section id="library-view" class="view">
-            <div class="view-header">
-                <button onclick="App.goHome()">⬅</button>
-                <h2>المكتبة الإسلامية</h2>
-            </div>
-
-            <div id="library-list"></div>
-            <div id="library-content"></div>
-        </section>
-
-
-        <!-- 🟢 صفحة التسبيح -->
-        <section id="tasbeeh-view" class="view">
-            <div class="view-header">
-                <button onclick="App.goHome()">⬅</button>
-                <h2>تسبيح</h2>
-            </div>
-
-            <div class="tasbeeh-container">
-                <div id="tasbeeh-counter">0</div>
-                <button onclick="Tasbeeh.increment()">تسبيح</button>
-                <button onclick="Tasbeeh.reset()">إعادة</button>
-            </div>
-        </section>
-
-
-        <!-- 🟢 صفحة مواقيت الصلاة -->
-        <section id="prayer-view" class="view">
-            <div class="view-header">
-                <button onclick="App.goHome()">⬅</button>
-                <h2>مواقيت الصلاة</h2>
-            </div>
-
-            <div id="prayer-times"></div>
-            <button onclick="Prayer.loadTimes()">تحديث المواقيت</button>
-        </section>
-
-
-        <!-- 🟢 صفحة المفضلة -->
-        <section id="favorites-view" class="view">
-            <div class="view-header">
-                <button onclick="App.goHome()">⬅</button>
-                <h2>المفضلة</h2>
-            </div>
-
-            <div id="favorites-list"></div>
-        </section>
-
-
-        <!-- 🟢 صفحة البحث -->
-        <section id="search-view" class="view">
-            <div class="view-header">
-                <button onclick="App.goHome()">⬅</button>
-                <h2>البحث</h2>
-            </div>
-
-            <input type="text" id="search-input" placeholder="ابحث هنا..." oninput="Search.perform()">
-            <div id="search-results"></div>
-        </section>
-
-
-        <!-- 🟢 صفحة الإعدادات -->
-        <section id="settings-view" class="view">
-            <div class="view-header">
-                <button onclick="App.goHome()">⬅</button>
-                <h2>الإعدادات</h2>
-            </div>
-
-            <div class="settings-item">
-                <label>الوضع الليلي</label>
-                <input type="checkbox" onchange="Settings.toggleDarkMode(this.checked)">
-            </div>
-
-            <div class="settings-item">
-                <label>تفعيل الاهتزاز</label>
-                <input type="checkbox" onchange="Settings.toggleVibration(this.checked)">
-            </div>
-
-            <div class="settings-item">
-                <label>تشغيل الأذان</label>
-                <input type="checkbox" onchange="Settings.toggleAdhan(this.checked)">
-            </div>
-
-            <div class="settings-item">
-                <label>حجم الخط</label>
-                <input type="range" min="14" max="24" onchange="Settings.changeFontSize(this.value)">
-            </div>
-
-            <button onclick="Settings.resetApp()">إعادة ضبط التطبيق</button>
-        </section>
-
-    </main>
-
-
-    <!-- 🔷 FOOTER -->
-    <footer class="app-footer">
-        © المرجعية الإسلامية
-    </footer>
-
-
-    <!-- JS -->
-    <script src="data.js"></script>
-    <script src="script.js"></script>
-const azkarData = {
+                <button onclick="App.openView('azkar')">📿 الأذكار</button>const azkarData = {
     // أذكار الصباح
     morning: [
         { 
@@ -363,5 +224,144 @@ const azkarData = {
         }
     ]
 };
+                <button onclick="App.openView('hadith')">📖 الأربعون النووية</button>
+                <button onclick="App.openView('library')">📚 المكتبة</button>
+                <button onclick="App.openView('tasbeeh')">📿 تسبيح</button>
+                <button onclick="App.openView('prayer')">🕌 مواقيت الصلاة</button>
+                <button onclick="App.openView('favorites')">⭐ المفضلة</button>
+
+            </div>
+
+        </section>
+
+
+        <!-- 🟢 صفحة الأذكار -->
+        <section id="azkar-view" class="view">
+            <div class="view-header">
+                <button onclick="App.goHome()">⬅</button>
+                <h2>الأذكار</h2>
+            </div>
+
+            <div id="azkar-categories"></div>
+            <div id="azkar-content"></div>
+        </section>
+
+
+        <!-- 🟢 صفحة الأربعون النووية -->
+        <section id="hadith-view" class="view">
+            <div class="view-header">
+                <button onclick="App.goHome()">⬅</button>
+                <h2>الأربعون النووية</h2>
+            </div>
+
+            <div id="hadith-list"></div>
+        </section>
+
+
+        <!-- 🟢 صفحة المكتبة -->
+        <section id="library-view" class="view">
+            <div class="view-header">
+                <button onclick="App.goHome()">⬅</button>
+                <h2>المكتبة الإسلامية</h2>
+            </div>
+
+            <div id="library-list"></div>
+            <div id="library-content"></div>
+        </section>
+
+
+        <!-- 🟢 صفحة التسبيح -->
+        <section id="tasbeeh-view" class="view">
+            <div class="view-header">
+                <button onclick="App.goHome()">⬅</button>
+                <h2>تسبيح</h2>
+            </div>
+
+            <div class="tasbeeh-container">
+                <div id="tasbeeh-counter">0</div>
+                <button onclick="Tasbeeh.increment()">تسبيح</button>
+                <button onclick="Tasbeeh.reset()">إعادة</button>
+            </div>
+        </section>
+
+
+        <!-- 🟢 صفحة مواقيت الصلاة -->
+        <section id="prayer-view" class="view">
+            <div class="view-header">
+                <button onclick="App.goHome()">⬅</button>
+                <h2>مواقيت الصلاة</h2>
+            </div>
+
+            <div id="prayer-times"></div>
+            <button onclick="Prayer.loadTimes()">تحديث المواقيت</button>
+        </section>
+
+
+        <!-- 🟢 صفحة المفضلة -->
+        <section id="favorites-view" class="view">
+            <div class="view-header">
+                <button onclick="App.goHome()">⬅</button>
+                <h2>المفضلة</h2>
+            </div>
+
+            <div id="favorites-list"></div>
+        </section>
+
+
+        <!-- 🟢 صفحة البحث -->
+        <section id="search-view" class="view">
+            <div class="view-header">
+                <button onclick="App.goHome()">⬅</button>
+                <h2>البحث</h2>
+            </div>
+
+            <input type="text" id="search-input" placeholder="ابحث هنا..." oninput="Search.perform()">
+            <div id="search-results"></div>
+        </section>
+
+
+        <!-- 🟢 صفحة الإعدادات -->
+        <section id="settings-view" class="view">
+            <div class="view-header">
+                <button onclick="App.goHome()">⬅</button>
+                <h2>الإعدادات</h2>
+            </div>
+
+            <div class="settings-item">
+                <label>الوضع الليلي</label>
+                <input type="checkbox" onchange="Settings.toggleDarkMode(this.checked)">
+            </div>
+
+            <div class="settings-item">
+                <label>تفعيل الاهتزاز</label>
+                <input type="checkbox" onchange="Settings.toggleVibration(this.checked)">
+            </div>
+
+            <div class="settings-item">
+                <label>تشغيل الأذان</label>
+                <input type="checkbox" onchange="Settings.toggleAdhan(this.checked)">
+            </div>
+
+            <div class="settings-item">
+                <label>حجم الخط</label>
+                <input type="range" min="14" max="24" onchange="Settings.changeFontSize(this.value)">
+            </div>
+
+            <button onclick="Settings.resetApp()">إعادة ضبط التطبيق</button>
+        </section>
+
+    </main>
+
+
+    <!-- 🔷 FOOTER -->
+    <footer class="app-footer">
+        © المرجعية الإسلامية
+    </footer>
+
+
+    <!-- JS -->
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+
 </body>
 </html>
