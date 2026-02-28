@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مواقيت الصلاة</title>
+    <title>مواقيت الصلاة - النسخة الاحترافية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -24,70 +24,112 @@
             background-color: var(--primary-color);
             color: var(--white);
             padding: 20px; text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         #app-container {
             flex: 1; padding: 15px; max-width: 500px; margin: 0 auto; width: 100%;
+            box-sizing: border-box;
         }
 
-        .selector-box {
-            background: white; padding: 15px; border-radius: 10px;
-            margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-align: center;
+        .control-panel {
+            background: white; padding: 15px; border-radius: 15px;
+            margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
+
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary-color); }
 
         select {
-            width: 100%; padding: 10px; border-radius: 5px;
-            font-family: 'Cairo'; border: 1px solid #ccc;
+            width: 100%; padding: 12px; border-radius: 10px;
+            font-family: 'Cairo'; border: 2px solid #eee; margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .gps-btn {
+            width: 100%; background: var(--primary-color); color: white;
+            border: none; padding: 12px; border-radius: 10px;
+            font-family: 'Cairo'; font-weight: bold; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
 
         .prayer-card {
-            background: var(--white); border-radius: 12px;
-            padding: 15px; margin-bottom: 10px;
-            display: flex; justify-content: space-between;
+            background: var(--white); border-radius: 15px;
+            padding: 18px; margin-bottom: 12px;
+            display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border-right: 5px solid var(--accent-color);
+            border-right: 6px solid #ddd;
+            transition: 0.3s;
         }
 
-        .prayer-name { font-weight: bold; color: var(--primary-color); }
+        .prayer-card.next-prayer {
+            border-right-color: var(--accent-color);
+            background: #fffdf5;
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .prayer-name { font-size: 1.2rem; font-weight: bold; color: var(--primary-color); }
+        .prayer-time { font-size: 1.2rem; font-weight: bold; color: #444; }
 
         nav.bottom-nav {
             background: var(--white); display: flex;
-            justify-content: center; padding: 10px;
-            position: sticky; bottom: 0; gap: 10px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            justify-content: space-around; padding: 12px;
+            position: sticky; bottom: 0;
+            box-shadow: 0 -2px 15px rgba(0,0,0,0.1);
         }
 
         .nav-btn {
-            background: #eee; border: none; padding: 8px 15px;
-            border-radius: 20px; font-family: 'Cairo';
+            background: #f0f0f0; border: none; padding: 10px 20px;
+            border-radius: 25px; font-family: 'Cairo';
             font-weight: bold; text-decoration: none; color: var(--primary-color);
         }
+
+        .nav-btn.active { background: var(--primary-color); color: white; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>مواقيت الصلاة</h1>
-    <div id="hijri-date">...</div>
+    <div id="hijri-date" style="font-size: 0.9rem; opacity: 0.9;">جاري التحميل...</div>
 </header>
 
 <main id="app-container">
-    <div class="selector-box">
-        <label>اختر مدينتك (إذا لم يعمل التحديد التلقائي):</label>
-        <select id="citySelect" onchange="getTimesByCity()">
-            <option value="Cairo,Egypt">القاهرة، مصر</option>
-            <option value="Alexandria,Egypt">الإسكندرية، مصر</option>
-            <option value="Mecca,Saudi Arabia">مكة المكرمة</option>
-            <option value="Medina,Saudi Arabia">المدينة المنورة</option>
-            <option value="Riyadh,Saudi Arabia">الرياض</option>
-            <option value="Jerusalem,Palestine">القدس</option>
-            <option value="Gaza,Palestine">غزة</option>
-            <option value="Amman,Jordan">عمان</option>
-            <option value="Dubai,UAE">دبي</option>
-            <option value="Kuwait,Kuwait">الكويت</option>
+    <div class="control-panel">
+        <label>📍 اختر المحافظة (مصر):</label>
+        <select id="citySelect" onchange="loadByManualCity()">
+            <option value="Cairo">القاهرة</option>
+            <option value="Alexandria">الإسكندرية</option>
+            <option value="Giza">الجيزة</option>
+            <option value="Dakahlia">الدقهلية</option>
+            <option value="Red Sea">البحر الأحمر</option>
+            <option value="Beheira">البحيرة</option>
+            <option value="Fayoum">الفيوم</option>
+            <option value="Gharbia">الغربية</option>
+            <option value="Ismailia">الإسماعيلية</option>
+            <option value="Monufia">المنوفية</option>
+            <option value="Minya">المنيا</option>
+            <option value="Qalyubia">القليوبية</option>
+            <option value="New Valley">الوادي الجديد</option>
+            <option value="Sharqia">الشرقية</option>
+            <option value="Suez">السويس</option>
+            <option value="Aswan">أسوان</option>
+            <option value="Assiut">أسيوط</option>
+            <option value="Beni Suef">بني سويف</option>
+            <option value="Port Said">بورسعيد</option>
+            <option value="Damietta">دمياط</option>
+            <option value="South Sinai">جنوب سيناء</option>
+            <option value="Kafr El Sheikh">كفر الشيخ</option>
+            <option value="Matrouh">مطروح</option>
+            <option value="Luxor">الأقصر</option>
+            <option value="Qena">قنا</option>
+            <option value="North Sinai">شمال سيناء</option>
+            <option value="Sohag">سوهاج</option>
         </select>
-        <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">سيتم حفظ اختيارك تلقائياً.</p>
+
+        <button class="gps-btn" onclick="loadByGPS()">
+            <span>🌐 تحديد تلقائي عبر الموقع (GPS)</span>
+        </button>
     </div>
 
     <div id="prayers-list"></div>
@@ -95,52 +137,76 @@
 
 <nav class="bottom-nav">
     <a href="index.html" class="nav-btn">📖 الأذكار</a>
-    <a href="#" class="nav-btn" style="background: var(--primary-color); color: white;">🕋 المواقيت</a>
+    <a href="#" class="nav-btn active">🕋 المواقيت</a>
 </nav>
 
 <script>
-    const prayerNamesAr = { "Fajr": "الفجر", "Sunrise": "الشروق", "Dhuhr": "الظهر", "Asr": "العصر", "Maghrib": "المغرب", "Isha": "العشاء" };
+    const prayerAr = { "Fajr": "الفجر", "Sunrise": "الشروق", "Dhuhr": "الظهر", "Asr": "العصر", "Maghrib": "المغرب", "Isha": "العشاء" };
 
-    async function fetchTimes(city, country) {
-        const url = `https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=5`;
+    // وظيفة لتحويل الوقت من 24 إلى 12 ساعة (ص/م)
+    function formatTo12Hr(time) {
+        let [hrs, mins] = time.split(':');
+        hrs = parseInt(hrs);
+        let period = hrs >= 12 ? 'م' : 'ص';
+        hrs = hrs % 12 || 12;
+        return `${hrs}:${mins} ${period}`;
+    }
+
+    async function fetchAPI(url) {
         try {
-            const response = await fetch(url);
-            const data = await response.json();
-            displayResults(data.data);
-            localStorage.setItem('userCity', city + ',' + country); // حفظ الاختيار
-        } catch (e) {
-            alert("فشل الاتصال بالإنترنت");
+            const res = await fetch(url);
+            const data = await res.json();
+            if(data.code === 200) display(data.data);
+        } catch (e) { alert("تأكد من اتصالك بالإنترنت"); }
+    }
+
+    function loadByManualCity() {
+        const city = document.getElementById('citySelect').value;
+        localStorage.setItem('savedCity', city);
+        fetchAPI(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Egypt&method=5`);
+    }
+
+    function loadByGPS() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(p => {
+                fetchAPI(`https://api.aladhan.com/v1/timings?latitude=${p.coords.latitude}&longitude=${p.coords.longitude}&method=5`);
+                localStorage.removeItem('savedCity'); // إزالة الحفظ اليدوي إذا استخدم GPS
+            }, () => alert("فشل تحديد الموقع، يرجى اختيار المحافظة يدوياً."));
         }
     }
 
-    function displayResults(data) {
+    function display(data) {
         document.getElementById('hijri-date').innerText = `${data.date.hijri.day} ${data.date.hijri.month.ar} ${data.date.hijri.year} هـ`;
         const list = document.getElementById('prayers-list');
         list.innerHTML = '';
-        for (const [key, value] of Object.entries(prayerNamesAr)) {
+        
+        const now = new Date();
+        const currentTime = now.getHours() * 60 + now.getMinutes();
+        let nextFound = false;
+
+        for (const [id, name] of Object.entries(prayerAr)) {
+            const timeRaw = data.timings[id];
+            const [h, m] = timeRaw.split(':');
+            const prayerTotalMins = parseInt(h) * 60 + parseInt(m);
+            
+            let cssClass = 'prayer-card';
+            if (!nextFound && prayerTotalMins > currentTime) {
+                cssClass += ' next-prayer';
+                nextFound = true;
+            }
+
             list.innerHTML += `
-                <div class="prayer-card">
-                    <span class="prayer-name">${value}</span>
-                    <span style="direction:ltr">${data.timings[key]}</span>
+                <div class="${cssClass}">
+                    <span class="prayer-name">${name}</span>
+                    <span class="prayer-time">${formatTo12Hr(timeRaw)}</span>
                 </div>`;
         }
     }
 
-    function getTimesByCity() {
-        const val = document.getElementById('citySelect').value.split(',');
-        fetchTimes(val[0], val[1]);
-    }
-
-    // تشغيل التطبيق عند الفتح
     window.onload = () => {
-        const saved = localStorage.getItem('userCity');
-        if (saved) {
-            document.getElementById('citySelect').value = saved;
-            const val = saved.split(',');
-            fetchTimes(val[0], val[1]);
-        } else {
-            getTimesByCity(); // تحميل الافتراضي (القاهرة)
-        }
+        const saved = localStorage.getItem('savedCity');
+        if (saved) document.getElementById('citySelect').value = saved;
+        loadByManualCity();
     };
 </script>
 </body>
