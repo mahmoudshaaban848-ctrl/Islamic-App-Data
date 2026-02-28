@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مواقيت الصلاة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c5e50; 
+            --accent-color: #d4af37;  
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        header h1 { margin: 0; font-size: 1.5rem; }
+
+        #app-container {
+            flex: 1;
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .status-msg {
+            text-align: center;
+            font-size: 1.1rem;
+            margin: 20px 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .prayer-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-right: 6px solid var(--accent-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .prayer-name { color: var(--primary-color); }
+        .prayer-time { color: var(--text-color); direction: ltr; }
+
+        /* شريط التنقل السفلي */
+        nav.bottom-nav {
+            background: var(--white);
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            position: sticky;
+            bottom: 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: #eee;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: 'Cairo';
+            font-weight: bold;
+            cursor: pointer;
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .nav-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>مواقيت الصلاة</h1>
+        <div id="hijri-date" style="margin-top: 5px; font-size: 0.9rem; color: #e8f5e9;">جاري تحديد التاريخ...</div>
+    </header>
+
+    <main id="app-container">
+        <div id="status" class="status-msg">يرجى الانتظار.. جاري تحديد موقعك لحساب المواقيت بدقة 📍</div>
+        <div id="prayers-list"></div>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-btn">📖 العودة للأذكار</a>
+        <a href="#" class="nav-btn active">🕋 مواقيت الصلاة</a>
+    </nav>
+
+    <script>
+        // الأسماء العربية للصلوات التي نريد عرضها فقط
+        const prayerNamesAr = {
+            "Fajr": "صلاة الفجر",
+            "Dhuhr": "صلاة الظهر",
+            "Asr": "صلاة العصر",
+            "Maghrib": "صلاة المغرب",
+            "Isha": "صلاة العشاء"
+        };
+
+        // تحويل الوقت من نظام 24 ساعة إلى 12 ساعة (ص/م)
+        function formatTime(time24) {
+            let [hours, minutes] = time24.split(':');
+            hours = parseInt(hours);
+            let ampm = hours >= 12 ? 'م' : 'ص';
+            hours = hours % 12;
+            hours = hours ? hours : 12; 
+            return hours + ':' + minutes + ' ' + ampm;
+        }
+
+        function getPrayerTimes() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        fetchTimes(lat, lng);
+                    },
+                    (error) => {
+                        document.getElementById('status').innerText = "❌ يرجى تفعيل الموقع (GPS) في هاتفك لمعرفة مواقيت الصلاة، ثم قم بتحديث الصفحة.";
+                    },
+                    { timeout: 10000 }
+                );
+            } else {
+                document.getElementById('status').innerText = "متصفحك لا يدعم تحديد الموقع.";
+            }
+        }
+
+        function fetchTimes(lat, lng) {
+            const date = new Date();
+            const dateStr = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
+            
+            // استخدام API مجاني لمعرفة المواقيت (طريقة الحساب رقم 5 تناسب معظم الدول العربية ومصر)
+            const apiUrl = \`https://api.aladhan.com/v1/timings/\${dateStr}?latitude=\${lat}&longitude=\${lng}&method=5\`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('status').style.display = 'none'; // إخفاء رسالة التحميل
+                    
+                    // عرض التاريخ الهجري
+                    const hijri = data.data.date.hijri;
+                    document.getElementById('hijri-date').innerText = \`\${hijri.day} \${hijri.month.ar} \${hijri.year} هـ\`;
+
+                    const timings = data.data.timings;
+                    const container = document.getElementById('prayers-list');
+                    container.innerHTML = '';
+
+                    // رسم بطاقات الصلاة
+                    for (const [key, value] of Object.entries(prayerNamesAr)) {
+                        const time12 = formatTime(timings[key]);
+                        const card = document.createElement('div');
+                        card.className = 'prayer-card';
+                        card.innerHTML = \`
+                            <div class="prayer-name">\${value}</div>
+                            <div class="prayer-time">\${time12}</div>
+                        \`;
+                        container.appendChild(card);
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('status').innerText = "⚠️ حدث خطأ أثناء جلب المواقيت. تأكد من اتصالك بالإنترنت.";
+                });
+        }
+
+        // تشغيل الدالة فور فتح الصفحة
+        window.onload = getPrayerTimes;
+    </script>
+</body>
+</html>
