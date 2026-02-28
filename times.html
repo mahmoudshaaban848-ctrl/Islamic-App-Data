@@ -10,190 +10,138 @@
             --primary-color: #2c5e50; 
             --accent-color: #d4af37;  
             --bg-color: #f4f7f6;
-            --text-color: #333;
             --white: #ffffff;
         }
 
         body {
             font-family: 'Cairo', sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; min-height: 100vh;
         }
 
         header {
             background-color: var(--primary-color);
             color: var(--white);
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            padding: 20px; text-align: center;
         }
-
-        header h1 { margin: 0; font-size: 1.5rem; }
 
         #app-container {
-            flex: 1;
-            padding: 15px;
-            max-width: 600px;
-            margin: 0 auto;
-            width: 100%;
-            box-sizing: border-box;
+            flex: 1; padding: 15px; max-width: 500px; margin: 0 auto; width: 100%;
         }
 
-        .status-msg {
+        .selector-box {
+            background: white; padding: 15px; border-radius: 10px;
+            margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             text-align: center;
-            font-size: 1.1rem;
-            margin: 20px 0;
-            color: var(--primary-color);
-            font-weight: bold;
+        }
+
+        select {
+            width: 100%; padding: 10px; border-radius: 5px;
+            font-family: 'Cairo'; border: 1px solid #ccc;
         }
 
         .prayer-card {
-            background: var(--white);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border-right: 6px solid var(--accent-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1.3rem;
-            font-weight: bold;
+            background: var(--white); border-radius: 12px;
+            padding: 15px; margin-bottom: 10px;
+            display: flex; justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-right: 5px solid var(--accent-color);
         }
 
-        .prayer-name { color: var(--primary-color); }
-        .prayer-time { color: var(--text-color); direction: ltr; }
+        .prayer-name { font-weight: bold; color: var(--primary-color); }
 
-        /* شريط التنقل السفلي */
         nav.bottom-nav {
-            background: var(--white);
-            display: flex;
-            justify-content: center;
-            padding: 10px;
-            position: sticky;
-            bottom: 0;
+            background: var(--white); display: flex;
+            justify-content: center; padding: 10px;
+            position: sticky; bottom: 0; gap: 10px;
             box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            gap: 15px;
         }
 
         .nav-btn {
-            background: #eee;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-family: 'Cairo';
-            font-weight: bold;
-            cursor: pointer;
-            color: var(--primary-color);
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-        .nav-btn.active {
-            background: var(--primary-color);
-            color: white;
+            background: #eee; border: none; padding: 8px 15px;
+            border-radius: 20px; font-family: 'Cairo';
+            font-weight: bold; text-decoration: none; color: var(--primary-color);
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>مواقيت الصلاة</h1>
-        <div id="hijri-date" style="margin-top: 5px; font-size: 0.9rem; color: #e8f5e9;">جاري تحديد التاريخ...</div>
-    </header>
+<header>
+    <h1>مواقيت الصلاة</h1>
+    <div id="hijri-date">...</div>
+</header>
 
-    <main id="app-container">
-        <div id="status" class="status-msg">يرجى الانتظار.. جاري تحديد موقعك لحساب المواقيت بدقة 📍</div>
-        <div id="prayers-list"></div>
-    </main>
+<main id="app-container">
+    <div class="selector-box">
+        <label>اختر مدينتك (إذا لم يعمل التحديد التلقائي):</label>
+        <select id="citySelect" onchange="getTimesByCity()">
+            <option value="Cairo,Egypt">القاهرة، مصر</option>
+            <option value="Alexandria,Egypt">الإسكندرية، مصر</option>
+            <option value="Mecca,Saudi Arabia">مكة المكرمة</option>
+            <option value="Medina,Saudi Arabia">المدينة المنورة</option>
+            <option value="Riyadh,Saudi Arabia">الرياض</option>
+            <option value="Jerusalem,Palestine">القدس</option>
+            <option value="Gaza,Palestine">غزة</option>
+            <option value="Amman,Jordan">عمان</option>
+            <option value="Dubai,UAE">دبي</option>
+            <option value="Kuwait,Kuwait">الكويت</option>
+        </select>
+        <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">سيتم حفظ اختيارك تلقائياً.</p>
+    </div>
 
-    <nav class="bottom-nav">
-        <a href="index.html" class="nav-btn">📖 العودة للأذكار</a>
-        <a href="#" class="nav-btn active">🕋 مواقيت الصلاة</a>
-    </nav>
+    <div id="prayers-list"></div>
+</main>
 
-    <script>
-        // الأسماء العربية للصلوات التي نريد عرضها فقط
-        const prayerNamesAr = {
-            "Fajr": "صلاة الفجر",
-            "Dhuhr": "صلاة الظهر",
-            "Asr": "صلاة العصر",
-            "Maghrib": "صلاة المغرب",
-            "Isha": "صلاة العشاء"
-        };
+<nav class="bottom-nav">
+    <a href="index.html" class="nav-btn">📖 الأذكار</a>
+    <a href="#" class="nav-btn" style="background: var(--primary-color); color: white;">🕋 المواقيت</a>
+</nav>
 
-        // تحويل الوقت من نظام 24 ساعة إلى 12 ساعة (ص/م)
-        function formatTime(time24) {
-            let [hours, minutes] = time24.split(':');
-            hours = parseInt(hours);
-            let ampm = hours >= 12 ? 'م' : 'ص';
-            hours = hours % 12;
-            hours = hours ? hours : 12; 
-            return hours + ':' + minutes + ' ' + ampm;
+<script>
+    const prayerNamesAr = { "Fajr": "الفجر", "Sunrise": "الشروق", "Dhuhr": "الظهر", "Asr": "العصر", "Maghrib": "المغرب", "Isha": "العشاء" };
+
+    async function fetchTimes(city, country) {
+        const url = `https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=5`;
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            displayResults(data.data);
+            localStorage.setItem('userCity', city + ',' + country); // حفظ الاختيار
+        } catch (e) {
+            alert("فشل الاتصال بالإنترنت");
         }
+    }
 
-        function getPrayerTimes() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
-                        fetchTimes(lat, lng);
-                    },
-                    (error) => {
-                        document.getElementById('status').innerText = "❌ يرجى تفعيل الموقع (GPS) في هاتفك لمعرفة مواقيت الصلاة، ثم قم بتحديث الصفحة.";
-                    },
-                    { timeout: 10000 }
-                );
-            } else {
-                document.getElementById('status').innerText = "متصفحك لا يدعم تحديد الموقع.";
-            }
+    function displayResults(data) {
+        document.getElementById('hijri-date').innerText = `${data.date.hijri.day} ${data.date.hijri.month.ar} ${data.date.hijri.year} هـ`;
+        const list = document.getElementById('prayers-list');
+        list.innerHTML = '';
+        for (const [key, value] of Object.entries(prayerNamesAr)) {
+            list.innerHTML += `
+                <div class="prayer-card">
+                    <span class="prayer-name">${value}</span>
+                    <span style="direction:ltr">${data.timings[key]}</span>
+                </div>`;
         }
+    }
 
-        function fetchTimes(lat, lng) {
-            const date = new Date();
-            const dateStr = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
-            
-            // استخدام API مجاني لمعرفة المواقيت (طريقة الحساب رقم 5 تناسب معظم الدول العربية ومصر)
-            const apiUrl = \`https://api.aladhan.com/v1/timings/\${dateStr}?latitude=\${lat}&longitude=\${lng}&method=5\`;
+    function getTimesByCity() {
+        const val = document.getElementById('citySelect').value.split(',');
+        fetchTimes(val[0], val[1]);
+    }
 
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('status').style.display = 'none'; // إخفاء رسالة التحميل
-                    
-                    // عرض التاريخ الهجري
-                    const hijri = data.data.date.hijri;
-                    document.getElementById('hijri-date').innerText = \`\${hijri.day} \${hijri.month.ar} \${hijri.year} هـ\`;
-
-                    const timings = data.data.timings;
-                    const container = document.getElementById('prayers-list');
-                    container.innerHTML = '';
-
-                    // رسم بطاقات الصلاة
-                    for (const [key, value] of Object.entries(prayerNamesAr)) {
-                        const time12 = formatTime(timings[key]);
-                        const card = document.createElement('div');
-                        card.className = 'prayer-card';
-                        card.innerHTML = \`
-                            <div class="prayer-name">\${value}</div>
-                            <div class="prayer-time">\${time12}</div>
-                        \`;
-                        container.appendChild(card);
-                    }
-                })
-                .catch(error => {
-                    document.getElementById('status').innerText = "⚠️ حدث خطأ أثناء جلب المواقيت. تأكد من اتصالك بالإنترنت.";
-                });
+    // تشغيل التطبيق عند الفتح
+    window.onload = () => {
+        const saved = localStorage.getItem('userCity');
+        if (saved) {
+            document.getElementById('citySelect').value = saved;
+            const val = saved.split(',');
+            fetchTimes(val[0], val[1]);
+        } else {
+            getTimesByCity(); // تحميل الافتراضي (القاهرة)
         }
-
-        // تشغيل الدالة فور فتح الصفحة
-        window.onload = getPrayerTimes;
-    </script>
+    };
+</script>
 </body>
 </html>
