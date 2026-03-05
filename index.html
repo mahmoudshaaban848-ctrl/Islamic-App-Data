@@ -333,41 +333,7 @@
                         if (currentCount === 0) {
                             card.classList.add('finished');
                         }
- <script>
-    // 1. برمجة عداد المسبحة مع حفظ العدد في الذاكرة
-    let count = localStorage.getItem('tasbeeh_count') || 0;
-    document.getElementById('counter').innerText = count;
-
-    function increment() {
-        count++;
-        document.getElementById('counter').innerText = count;
-        localStorage.setItem('tasbeeh_count', count);
-        // اهتزاز بسيط للهاتف عند الضغط
-        if (navigator.vibrate) navigator.vibrate(50);
-    }
-
-    function resetCounter() {
-        if(confirm("هل تريد تصفير العداد؟")) {
-            count = 0;
-            document.getElementById('counter').innerText = count;
-            localStorage.setItem('tasbeeh_count', count);
-        }
-    }
-
-    // 2. برمجة التاريخ التلقائي
-    const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById('full-date').innerText = new Date().toLocaleDateString('ar-SA', dateOptions);
-
-    // 3. تغيير الحديث عشوائياً عند كل دخول
-    const simpleHadiths = [
-        "\"كلمتان خفيفتان على اللسان ثقيلتان في الميزان: سبحان الله وبحمده سبحان الله العظيم\"",
-        "\"من صلى عليّ واحدة صلى الله عليه بها عشراً\"",
-        "\"أحب الكلام إلى الله: سبحان الله، والحمد لله، ولا إله إلا الله، والله أكبر\"",
-        "\"لا حول ولا قوة إلا بالله كنز من كنوز الجنة\""
-    ];
-    document.getElementById('daily-hadith').innerText = simpleHadiths[Math.floor(Math.random() * simpleHadiths.length)];
-</script>
-                   }
+              }
                 };
 
                 container.appendChild(card);
