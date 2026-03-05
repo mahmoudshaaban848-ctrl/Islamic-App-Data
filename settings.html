@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الإعدادات والقبلة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a4d3e;
+            --accent-color: #d4af37;
+            --bg-color: #f8f9fa;
+            --white: #ffffff;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0; padding: 0;
+            color: var(--text-color);
+            transition: 0.3s;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--accent-color);
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto 100px auto;
+        }
+
+        .section-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .section-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: block;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        /* ستيل البوصلة */
+        .qibla-box {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+        }
+
+        #compass {
+            width: 100%;
+            transition: transform 0.1s ease-out;
+        }
+
+        .qibla-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-family: 'Cairo';
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        /* أدوات التحكم */
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute; cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s; border-radius: 24px;
+        }
+
+        input:checked + .slider { background-color: var(--primary-color); }
+
+        .slider:before {
+            position: absolute; content: "";
+            height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        nav.bottom-nav {
+            background: var(--white);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px;
+            position: fixed;
+            bottom: 0; width: 100%;
+            box-shadow: 0 -2px 15px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+
+        .nav-btn {
+            background: #f0f0f0;
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .nav-btn.active { background: var(--primary-color); color: white; }
+
+        /* وضع ليلي بسيط */
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        .dark-mode .section-card { background-color: #1e1e1e; color: white; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>الإعدادات والقبلة</h1>
+</header>
+
+<div class="container">
+
+    <div class="section-card">
+        <span class="section-title">🕋 اتجاه القبلة</span>
+        <div class="qibla-box">
+            <img src="https://cdn-icons-png.flaticon.com/512/149/149022.png" id="compass" alt="Compass">
+        </div>
+        <p id="qibla-text" style="font-size: 0.8rem; margin-top: 10px;">اضغط لتفعيل البوصلة وتحديد القبلة</p>
+        <button class="qibla-btn" onclick="initCompass()">تفعيل البوصلة</button>
+    </div>
+
+    <div class="section-card">
+        <span class="section-title">⚙️ تخصيص التطبيق</span>
+        
+        <div class="setting-item">
+            <span>الوضع الليلي</span>
+            <label class="switch">
+                <input type="checkbox" id="darkModeToggle" onclick="toggleDarkMode()">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="setting-item">
+            <span>حجم الخط</span>
+            <input type="range" min="14" max="24" value="18" oninput="changeFontSize(this.value)">
+        </div>
+    </div>
+
+    <div class="section-card">
+        <span class="section-title">ℹ️ حول التطبيق</span>
+        <p style="font-size: 0.9rem;">تطبيق إسلامي شامل - جميع الحقوق محفوظة</p>
+    </div>
+
+</div>
+
+<nav class="bottom-nav">
+    <a href="index.html" class="nav-btn">📖 الأذكار</a>
+    <a href="times.html" class="nav-btn">🕋 المواقيت</a>
+    <a href="library.html" class="nav-btn">📚 المكتبة</a>
+    <a href="#" class="nav-btn active">⚙️ الإعدادات</a>
+</nav>
+
+<script>
+    // وظيفة الوضع الليلي
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+    }
+
+    // وظيفة تغيير الخط
+    function changeFontSize(size) {
+        document.body.style.fontSize = size + "px";
+        localStorage.setItem('fontSize', size);
+    }
+
+    // وظيفة البوصلة (تحتاج جهاز يدعم المستشعرات)
+    function initCompass() {
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', function(event) {
+                var alpha = event.alpha; // الزاوية بالدرجات
+                if (alpha !== null) {
+                    // مكة تقريباً عند زاوية معينة حسب موقعك، هنا نجعلها تدور مع الجهاز
+                    document.getElementById('compass').style.transform = 'rotate(' + alpha + 'deg)';
+                    document.getElementById('qibla-text').innerText = "قم بتدوير الهاتف حتى يشير السهم للأعلى";
+                }
+            }, true);
+        } else {
+            alert("عذراً، جهازك لا يدعم مستشعر البوصلة.");
+        }
+    }
+
+    // استعادة الإعدادات المحفوظة
+    window.onload = function() {
+        if(localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('darkModeToggle').checked = true;
+        }
+        if(localStorage.getItem('fontSize')) {
+            changeFontSize(localStorage.getItem('fontSize'));
+        }
+    }
+</script>
+
+</body>
+</html>
