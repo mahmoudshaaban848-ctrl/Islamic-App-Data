@@ -336,5 +336,11 @@ o<!DOCTYPE html>
             loadAdhkar('morningAdhkar', 'أذكار الصباح', document.querySelector('.nav-btn'));
         };
     </script>
+<script>
+    // كود تشغيل التاريخ الهجري والميلادي
+    const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('full-date').innerText = new Date().toLocaleDateString('ar-SA', dateOptions);
+</script>
+
 </body>
 </html>
