@@ -344,6 +344,19 @@
     // كود تشغيل التاريخ الهجري والميلادي
     const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     document.getElementById('full-date').innerText = new Date().toLocaleDateString('ar-SA', dateOptions);
+    // كود تغيير الحديث عشوائياً عند كل دخول
+    const dailyHadiths = [
+        "\"خياركم من تعلم القرآن وعلمه\"",
+        "\"كلمتان خفيفتان على اللسان ثقيلتان في الميزان: سبحان الله وبحمده، سبحان الله العظيم\"",
+        "\"من صلى عليّ واحدة صلى الله عليه بها عشراً\"",
+        "\"أحب الكلام إلى الله: سبحان الله، والحمد لله، ولا إله إلا الله، والله أكبر\"",
+        "\"لا حول ولا قوة إلا بالله كنز من كنوز الجنة\""
+    ];
+    const hadithElement = document.getElementById('daily-hadith');
+    if (hadithElement) {
+        hadithElement.innerText = dailyHadiths[Math.floor(Math.random() * dailyHadiths.length)];
+    }
+
 </script>
 
 </body>
