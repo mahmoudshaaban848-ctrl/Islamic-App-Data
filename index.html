@@ -363,6 +363,26 @@
     if (hadithElement) {
         hadithElement.innerText = dailyHadiths[Math.floor(Math.random() * dailyHadiths.length)];
     }
+    // برمجة المسبحة الإلكترونية
+    let count = localStorage.getItem('tasbeeh_count') || 0;
+    const counterDisplay = document.getElementById('counter');
+    if (counterDisplay) counterDisplay.innerText = count;
+
+    function increment() {
+        count++;
+        if (counterDisplay) counterDisplay.innerText = count;
+        localStorage.setItem('tasbeeh_count', count);
+        // اهتزاز خفيف يشعر به المستخدم عند التسبيح
+        if (navigator.vibrate) navigator.vibrate(40);
+    }
+
+    function resetCounter() {
+        if(confirm("هل تريد تصفير عداد المسبحة؟")) {
+            count = 0;
+            if (counterDisplay) counterDisplay.innerText = count;
+            localStorage.setItem('tasbeeh_count', 0);
+        }
+    }
 
 </script>
 
