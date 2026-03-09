@@ -227,52 +227,63 @@ let qiblaAngle = 0;
 
 function startQibla() {
     const status = document.getElementById('qibla-status');
-    status.innerText = "جاري تحديد موقعك...";
-
-    // 1. الحصول على إذن الوصول للموقع (GPS) لحساب زاوية مكة
+    
+    // طلب الموقع بطريقة هادئة وسلسة
     if (navigator.geolocation) {
+        status.innerText = "جاري الحساب بدقة...";
+        
         navigator.geolocation.getCurrentPosition(position => {
             const userLat = position.coords.latitude;
             const userLng = position.coords.longitude;
             
-            // إحداثيات الكعبة المشرفة
-            const kaabaLat = 21.4225;
+            // إحداثيات الكعبة المشرفة الدقيقة
+            const kaabaLat = 21.4225; 
             const kaabaLng = 39.8262;
 
-            // معادلة حساب اتجاه القبلة
+            // المعادلة الرياضية المتقدمة لحساب زاوية القبلة (بناءً على موقعك)
             const y = Math.sin(Math.PI / 180 * (kaabaLng - userLng));
             const x = Math.cos(Math.PI / 180 * userLat) * Math.tan(Math.PI / 180 * kaabaLat) -
                       Math.sin(Math.PI / 180 * userLat) * Math.cos(Math.PI / 180 * (kaabaLng - userLng));
             
             qiblaAngle = Math.atan2(y, x) * (180 / Math.PI);
-            status.innerText = "تحرك بهاتفك ببطء لتحديد الاتجاه";
             
-            // 2. تفعيل حساس البوصلة في الهاتف
+            status.innerHTML = "تم تحديد الموقع <br> ضع الهاتف بشكل مسطح وقم بتدويره";
+            
+            // البدء في تدوير الإبرة بناءً على حساس الهاتف
             initCompass();
-        }, () => {
-            status.innerText = "يرجى تفعيل الـ GPS في هاتفك";
+        }, (error) => {
+            status.innerText = "يرجى السماح بالوصول للموقع لتحديد القبلة";
+        }, {
+            enableHighAccuracy: true // لضمان أعلى دقة ممكنة من الـ GPS
         });
+    } else {
+        status.innerText = "متصفحك لا يدعم تحديد الموقع";
     }
 }
 
 function initCompass() {
     const pointer = document.getElementById('compass-pointer');
     
-    // التعامل مع هواتف الأيفون والأندرويد
-    if (window.DeviceOrientationEvent) {
-        window.addEventListener('deviceorientationabsolute', (event) => {
-            let heading = event.alpha; // اتجاه الهاتف بالنسبة للشمال
-            if (event.webkitCompassHeading) heading = event.webkitCompassHeading; // للأيفون
+    // استخدام الحدث Absolute لضمان الشمال الحقيقي على الأندرويد
+    const eventName = 'ondeviceorientationabsolute' in window ? 'deviceorientationabsolute' : 'deviceorientation';
 
-            if (heading !== null) {
-                // تدوير الإبرة: (اتجاه مكة - اتجاه الهاتف الحالي)
-                const rotateDegree = qiblaAngle - heading;
-                pointer.style.transform = `rotate(${rotateDegree}deg)`;
-            }
-        }, true);
-    } else {
-        alert("عذراً، هاتفك لا يدعم حساس البوصلة");
-    }
+    window.addEventListener(eventName, (event) => {
+        let heading = event.alpha; // الزاوية من الشمال الحقيقي
+
+        // دعم هواتف الأيفون (Safari)
+        if (event.webkitCompassHeading) {
+            heading = event.webkitCompassHeading;
+        }
+
+        if (heading !== null) {
+            // حساب الزاوية النهائية: (زاوية القبلة - اتجاه رأس الهاتف الحالي)
+            // إضافة 360 واستخدام الـ Modulo لضمان دوران سلس وبدون قفزات
+            const rotateDegree = (qiblaAngle - heading + 360) % 360;
+            
+            // تحريك الإبرة برفق
+            pointer.style.transform = `rotate(${rotateDegree}deg)`;
+        }
+    }, true);
 }
 
 </script>
