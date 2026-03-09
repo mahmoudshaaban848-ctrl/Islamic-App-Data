@@ -376,13 +376,12 @@
         if (navigator.vibrate) navigator.vibrate(40);
     }
 
-    function resetCounter() {
-        if(confirm("هل تريد تصفير عداد المسبحة؟")) {
-            count = 0;
-            if (counterDisplay) counterDisplay.innerText = count;
-            localStorage.setItem('tasbeeh_count', 0);
-        }
+        function resetCounter() {
+        count = 0;
+        if (counterDisplay) counterDisplay.innerText = count;
+        localStorage.setItem('tasbeeh_count', 0);
     }
+
 
 </script>
 
