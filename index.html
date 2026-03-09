@@ -154,6 +154,21 @@
     <br>
     <button onclick="resetCounter()" style="background: none; border: none; color: #999; margin-top: 15px; font-size: 0.85rem; text-decoration: underline; cursor: pointer;">تصفير العداد</button>
 </div>
+<div id="qibla-section" style="background: #ffffff; margin: 15px; padding: 20px; border-radius: 20px; border: 2px solid #d4af37; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.08);">
+    <h3 style="color: #2c5e50; margin-top: 0; font-size: 1.1rem;">🕋 اتجاه القبلة</h3>
+    
+    <div style="position: relative; width: 180px; height: 180px; margin: 15px auto;">
+        <div style="width: 100%; height: 100%; border: 4px solid #f0f0f0; border-radius: 50%; position: absolute; top:0; left:0;"></div>
+        
+        <div id="compass-pointer" style="width: 100%; height: 100%; position: absolute; top:0; left:0; transition: transform 0.3s ease-out; display: flex; justify-content: center;">
+            <img src="https://cdn-icons-png.flaticon.com/512/447/447031.png" style="width: 40px; position: absolute; top: -15px;" alt="Kaaba">
+            <div style="width: 4px; height: 90px; background: linear-gradient(to bottom, #d4af37, #2c5e50); margin-top: 25px; border-radius: 2px;"></div>
+        </div>
+    </div>
+    
+    <p id="qibla-status" style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">اضغط للبدء في تحديد الاتجاه</p>
+    <button onclick="startQibla()" style="background: #d4af37; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%;">تفعيل البوصلة</button>
+</div>
 
     <main id="app-container">
         <div id="adhkar-list"></div>
