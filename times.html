@@ -93,21 +93,35 @@
     <h1>مواقيت الصلاة</h1>
     <div id="hijri-date" style="font-size: 0.9rem; opacity: 0.9;">جاري التحميل...</div>
 </header>
-<div id="qibla-section" style="background: #ffffff; margin: 15px; padding: 20px; border-radius: 20px; border: 2px solid #d4af37; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.08);">
-    <h3 style="color: #2c5e50; margin-top: 0; font-size: 1.1rem;">🕋 اتجاه القبلة</h3>
+<div id="qibla-section" style="background: #a4be35; margin: 15px; padding: 25px 15px; border-radius: 20px; text-align: center; color: white; box-shadow: 0 8px 15px rgba(0,0,0,0.1);">
+    <h3 style="margin-top: 0; font-size: 1.2rem; font-weight: normal;">اتجاه الكعبة: <span id="qibla-angle-text">...</span>° من الشمال.</h3>
     
-    <div style="position: relative; width: 180px; height: 180px; margin: 15px auto;">
-        <div style="width: 100%; height: 100%; border: 4px solid #f0f0f0; border-radius: 50%; position: absolute; top:0; left:0;"></div>
+    <h1 id="current-degree" style="font-size: 3.5rem; margin: 10px 0; font-weight: 300;">0°</h1>
+
+    <div style="position: relative; width: 220px; height: 220px; margin: 30px auto; background: radial-gradient(circle, #5b7527, #3e5318); border: 8px solid #8ba42d; border-radius: 50%; box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.2);">
         
-        <div id="compass-pointer" style="width: 100%; height: 100%; position: absolute; top:0; left:0; transition: transform 0.3s ease-out; display: flex; justify-content: center;">
-            <img src="https://cdn-icons-png.flaticon.com/512/447/447031.png" style="width: 40px; position: absolute; top: -15px;" alt="Kaaba">
-            <div style="width: 4px; height: 90px; background: linear-gradient(to bottom, #d4af37, #2c5e50); margin-top: 25px; border-radius: 2px;"></div>
+        <div style="position: absolute; top: 5px; left: 50%; transform: translateX(-50%); color: #8ba42d; font-weight: bold; font-size: 14px;">0</div>
+        <div style="position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); color: #8ba42d; font-weight: bold; font-size: 14px;">180</div>
+        <div style="position: absolute; top: 50%; right: 5px; transform: translateY(-50%); color: #8ba42d; font-weight: bold; font-size: 14px;">90</div>
+        <div style="position: absolute; top: 50%; left: 5px; transform: translateY(-50%); color: #8ba42d; font-weight: bold; font-size: 14px;">270</div>
+
+        <div id="compass-disc" style="width: 100%; height: 100%; position: absolute; top:0; left:0; transition: transform 0.1s ease-out;">
+            <div style="width: 4px; height: 110px; background: white; position: absolute; bottom: 50%; left: 50%; transform: translateX(-50%); box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>
+            <div style="width: 16px; height: 16px; background: white; border: 4px solid #3e5318; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+            <img src="https://cdn-icons-png.flaticon.com/512/447/447031.png" style="width: 35px; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: white; border-radius: 5px; padding: 2px;" alt="Kaaba">
         </div>
     </div>
-    
-    <p id="qibla-status" style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">اضغط لتفعيل البوصلة ومعرفة الاتجاه</p>
-    <button onclick="startQibla()" style="background: #d4af37; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%;">تفعيل البوصلة</button>
+
+    <div style="margin-top: 25px; font-size: 1.1rem;">
+        <p style="margin: 5px 0;">موقعك</p>
+        <p style="margin: 5px 0;">خط العرض: <span id="user-lat">...</span></p>
+        <p style="margin: 5px 0;">خط الطول: <span id="user-lng">...</span></p>
+    </div>
+
+    <p id="qibla-status" style="font-size: 0.9rem; margin: 15px 0; color: #eaf2d0;">اضغط للبدء في تحديد الاتجاه</p>
+    <button onclick="startAdvancedQibla()" style="background: white; color: #5b7527; border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">تحديد القبلة</button>
 </div>
+
 
 <main id="app-container">
     <div class="control-panel">
@@ -225,66 +239,84 @@
     };
 let qiblaAngle = 0;
 
-function startQibla() {
+function startAdvancedQibla() {
     const status = document.getElementById('qibla-status');
-    
-    // طلب الموقع بطريقة هادئة وسلسة
+    status.innerText = "جاري الحساب بدقة عالية...";
+
     if (navigator.geolocation) {
-        status.innerText = "جاري الحساب بدقة...";
-        
         navigator.geolocation.getCurrentPosition(position => {
             const userLat = position.coords.latitude;
             const userLng = position.coords.longitude;
-            
-            // إحداثيات الكعبة المشرفة الدقيقة
-            const kaabaLat = 21.4225; 
-            const kaabaLng = 39.8262;
 
-            // المعادلة الرياضية المتقدمة لحساب زاوية القبلة (بناءً على موقعك)
-            const y = Math.sin(Math.PI / 180 * (kaabaLng - userLng));
-            const x = Math.cos(Math.PI / 180 * userLat) * Math.tan(Math.PI / 180 * kaabaLat) -
-                      Math.sin(Math.PI / 180 * userLat) * Math.cos(Math.PI / 180 * (kaabaLng - userLng));
+            // عرض خطوط الطول والعرض على الشاشة (مثل صورتك)
+            document.getElementById('user-lat').innerText = userLat.toFixed(4) + "°";
+            document.getElementById('user-lng').innerText = userLng.toFixed(4) + "°";
+
+            // إحداثيات مكة المكرمة
+            const kaabaLat = 21.422487;
+            const kaabaLng = 39.826206;
+
+            // الحساب الرياضي الدقيق لزاوية القبلة
+            const lat1 = userLat * Math.PI / 180;
+            const lat2 = kaabaLat * Math.PI / 180;
+            const lng1 = userLng * Math.PI / 180;
+            const lng2 = kaabaLng * Math.PI / 180;
+
+            const y = Math.sin(lng2 - lng1) * Math.cos(lat2);
+            const x = Math.cos(lat1) * Math.sin(lat2) -
+                      Math.sin(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1);
+
+            let qAngle = Math.atan2(y, x) * 180 / Math.PI;
+            qAngle = (qAngle + 360) % 360; // تحويلها لزاوية من 0 إلى 360
+
+            qiblaAngle = qAngle;
             
-            qiblaAngle = Math.atan2(y, x) * (180 / Math.PI);
-            
-            status.innerHTML = "تم تحديد الموقع <br> ضع الهاتف بشكل مسطح وقم بتدويره";
-            
-            // البدء في تدوير الإبرة بناءً على حساس الهاتف
-            initCompass();
+            // عرض زاوية الكعبة على الشاشة
+            document.getElementById('qibla-angle-text').innerText = Math.round(qiblaAngle);
+            status.innerText = "تم التحديد بنجاح. حرك الهاتف الآن.";
+
+            // تشغيل حساسات الدوران
+            initAdvancedCompass();
+
         }, (error) => {
-            status.innerText = "يرجى السماح بالوصول للموقع لتحديد القبلة";
-        }, {
-            enableHighAccuracy: true // لضمان أعلى دقة ممكنة من الـ GPS
+            status.innerText = "فشل في تحديد الموقع، يرجى تفعيل الـ GPS.";
+        }, { 
+            enableHighAccuracy: true // طلب أدق موقع ممكن
         });
     } else {
-        status.innerText = "متصفحك لا يدعم تحديد الموقع";
+        status.innerText = "هاتفك لا يدعم تحديد الموقع.";
     }
 }
 
-function initCompass() {
-    const pointer = document.getElementById('compass-pointer');
-    
-    // استخدام الحدث Absolute لضمان الشمال الحقيقي على الأندرويد
+function initAdvancedCompass() {
+    const disc = document.getElementById('compass-disc');
+    const degreeText = document.getElementById('current-degree');
+
+    // استخدام الحساس الدقيق للأندرويد
     const eventName = 'ondeviceorientationabsolute' in window ? 'deviceorientationabsolute' : 'deviceorientation';
 
     window.addEventListener(eventName, (event) => {
-        let heading = event.alpha; // الزاوية من الشمال الحقيقي
+        let alpha = event.alpha;
+        let compassHeading = alpha;
 
-        // دعم هواتف الأيفون (Safari)
+        // تعديلات لتوافق أنواع الهواتف المختلفة
         if (event.webkitCompassHeading) {
-            heading = event.webkitCompassHeading;
+            compassHeading = event.webkitCompassHeading;
+        } else if (alpha !== null) {
+            compassHeading = 360 - alpha; 
         }
 
-        if (heading !== null) {
-            // حساب الزاوية النهائية: (زاوية القبلة - اتجاه رأس الهاتف الحالي)
-            // إضافة 360 واستخدام الـ Modulo لضمان دوران سلس وبدون قفزات
-            const rotateDegree = (qiblaAngle - heading + 360) % 360;
-            
-            // تحريك الإبرة برفق
-            pointer.style.transform = `rotate(${rotateDegree}deg)`;
+        if (compassHeading !== null) {
+            // عرض الزاوية الحالية للهاتف
+            degreeText.innerText = Math.round(compassHeading) + '°';
+
+            // تدوير إبرة القبلة للمكان الصحيح
+            let rotation = qiblaAngle - compassHeading;
+            disc.style.transform = `rotate(${rotation}deg)`;
         }
     }, true);
 }
+
 
 </script>
 </body>
