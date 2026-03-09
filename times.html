@@ -237,86 +237,78 @@
         if (saved) document.getElementById('citySelect').value = saved;
         loadByManualCity();
     };
-let qiblaAngle = 0;
+let targetQiblaAngle = 0;
 
-function startAdvancedQibla() {
+function startQiblaSmart() {
     const status = document.getElementById('qibla-status');
-    status.innerText = "جاري الحساب بدقة عالية...";
+    status.innerText = "جاري الاتصال بالأقمار الصناعية...";
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
             const userLat = position.coords.latitude;
             const userLng = position.coords.longitude;
 
-            // عرض خطوط الطول والعرض على الشاشة (مثل صورتك)
-            document.getElementById('user-lat').innerText = userLat.toFixed(4) + "°";
-            document.getElementById('user-lng').innerText = userLng.toFixed(4) + "°";
+            document.getElementById('user-lat').innerText = userLat.toFixed(3);
+            document.getElementById('user-lng').innerText = userLng.toFixed(3);
 
-            // إحداثيات مكة المكرمة
-            const kaabaLat = 21.422487;
-            const kaabaLng = 39.826206;
+            // إحداثيات الكعبة
+            const kLat = 21.4225;
+            const kLng = 39.8262;
 
-            // الحساب الرياضي الدقيق لزاوية القبلة
-            const lat1 = userLat * Math.PI / 180;
-            const lat2 = kaabaLat * Math.PI / 180;
-            const lng1 = userLng * Math.PI / 180;
-            const lng2 = kaabaLng * Math.PI / 180;
-
-            const y = Math.sin(lng2 - lng1) * Math.cos(lat2);
-            const x = Math.cos(lat1) * Math.sin(lat2) -
-                      Math.sin(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1);
-
-            let qAngle = Math.atan2(y, x) * 180 / Math.PI;
-            qAngle = (qAngle + 360) % 360; // تحويلها لزاوية من 0 إلى 360
-
-            qiblaAngle = qAngle;
+            // حساب زاوية القبلة
+            const y = Math.sin((kLng - userLng) * Math.PI / 180);
+            const x = Math.cos(userLat * Math.PI / 180) * Math.tan(kLat * Math.PI / 180) -
+                      Math.sin(userLat * Math.PI / 180) * Math.cos((kLng - userLng) * Math.PI / 180);
             
-            // عرض زاوية الكعبة على الشاشة
-            document.getElementById('qibla-angle-text').innerText = Math.round(qiblaAngle);
-            status.innerText = "تم التحديد بنجاح. حرك الهاتف الآن.";
+            targetQiblaAngle = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+            
+            document.getElementById('qibla-angle-text').innerText = Math.round(targetQiblaAngle);
+            status.innerText = "تم التحديد. وجه قمة الهاتف نحو الكعبة.";
 
-            // تشغيل حساسات الدوران
-            initAdvancedCompass();
-
-        }, (error) => {
-            status.innerText = "فشل في تحديد الموقع، يرجى تفعيل الـ GPS.";
-        }, { 
-            enableHighAccuracy: true // طلب أدق موقع ممكن
-        });
-    } else {
-        status.innerText = "هاتفك لا يدعم تحديد الموقع.";
+            initSmartRotation();
+        }, () => {
+            status.innerText = "فشل التحديد. تأكد من تفعيل GPS.";
+        }, { enableHighAccuracy: true });
     }
 }
 
-function initAdvancedCompass() {
-    const disc = document.getElementById('compass-disc');
-    const degreeText = document.getElementById('current-degree');
+function initSmartRotation() {
+    const needle = document.getElementById('compass-needle');
+    const degreeDisplay = document.getElementById('current-degree');
+    const section = document.getElementById('qibla-section');
+    const needleLine = document.getElementById('needle-line');
+    const iconBox = document.getElementById('qibla-icon-box');
 
-    // استخدام الحساس الدقيق للأندرويد
     const eventName = 'ondeviceorientationabsolute' in window ? 'deviceorientationabsolute' : 'deviceorientation';
 
     window.addEventListener(eventName, (event) => {
-        let alpha = event.alpha;
-        let compassHeading = alpha;
+        let heading = event.webkitCompassHeading || (360 - event.alpha);
 
-        // تعديلات لتوافق أنواع الهواتف المختلفة
-        if (event.webkitCompassHeading) {
-            compassHeading = event.webkitCompassHeading;
-        } else if (alpha !== null) {
-            compassHeading = 360 - alpha; 
+        if (heading) {
+            degreeDisplay.innerText = Math.round(heading) + "°";
+
+            // حساب الانحراف بين الهاتف والقبلة
+            let diff = (targetQiblaAngle - heading);
+            needle.style.transform = `rotate(${diff}deg)`;
+
+            // --- ميزة تغيير اللون عند الدقة ---
+            // إذا كان الفرق أقل من 5 درجات (أنت الآن تواجه القبلة)
+            if (Math.abs(diff) < 5 || Math.abs(diff) > 355) {
+                section.style.background = "#2c5e50"; // أخضر داكن (نجاح)
+                needleLine.style.background = "#ffd700"; // إبرة ذهبية
+                iconBox.style.background = "#ffd700";
+                iconBox.style.transform = "scale(1.2)";
+                document.getElementById('qibla-status').innerText = "أنت الآن تواجه القبلة بالضبط! 🕋";
+            } else {
+                section.style.background = "#a4be35"; // اللون العادي
+                needleLine.style.background = "white";
+                iconBox.style.background = "white";
+                iconBox.style.transform = "scale(1)";
+                document.getElementById('qibla-status').innerText = "حرك الهاتف حتى يتحول اللون للذهبي";
+            }
         }
-
-        if (compassHeading !== null) {
-            // عرض الزاوية الحالية للهاتف
-            degreeText.innerText = Math.round(compassHeading) + '°';
-
-            // تدوير إبرة القبلة للمكان الصحيح
-            let rotation = qiblaAngle - compassHeading;
-            disc.style.transform = `rotate(${rotation}deg)`;
-        }
-    }, true);
+    });
 }
-
 
 </script>
 </body>
