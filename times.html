@@ -93,36 +93,38 @@
     <h1>مواقيت الصلاة</h1>
     <div id="hijri-date" style="font-size: 0.9rem; opacity: 0.9;">جاري التحميل...</div>
 </header>
-<div id="qibla-section" style="background: #a4be35; margin: 15px; padding: 25px 15px; border-radius: 25px; text-align: center; color: white; box-shadow: 0 10px 20px rgba(0,0,0,0.15); transition: background 0.5s ease;">
-    <h3 id="qibla-header" style="margin-top: 0; font-size: 1.2rem; font-weight: normal; transition: color 0.5s;">اتجاه الكعبة: <span id="qibla-angle-text">...</span>° من الشمال</h3>
+<div id="qibla-section" style="background: #f4f7f0; margin: 15px; padding: 25px 15px; border-radius: 30px; text-align: center; color: #333; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 2px solid #a4be35;">
     
-    <h1 id="current-degree" style="font-size: 3.5rem; margin: 10px 0; font-weight: 300;">0°</h1>
+    <h3 id="qibla-header" style="color: #5b7527; font-weight: bold;">اتجاه الكعبة: <span id="qibla-angle-text">...</span>°</h3>
+    <h1 id="current-degree" style="font-size: 3rem; margin: 5px 0; color: #a4be35;">0°</h1>
 
-    <div style="position: relative; width: 240px; height: 240px; margin: 20px auto; background: radial-gradient(circle, #5b7527, #3e5318); border: 10px solid #8ba42d; border-radius: 50%; box-shadow: inset 0 0 25px rgba(0,0,0,0.4);">
+    <div id="compass-container" style="position: relative; width: 260px; height: 260px; margin: 20px auto; background: white; border: 6px solid #a4be35; border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
         
-        <div style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); color: #eaf2d0; font-weight: bold;">شمال</div>
-        <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #eaf2d0; font-weight: bold;">جنوب</div>
-        <div style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); color: #eaf2d0; font-weight: bold;">شرق</div>
-        <div style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); color: #eaf2d0; font-weight: bold;">غرب</div>
-
-        <div id="compass-needle" style="width: 100%; height: 100%; position: absolute; top:0; left:0; transition: transform 0.1s ease-out; display: flex; justify-content: center; align-items: center;">
-            <div id="needle-line" style="width: 6px; height: 100px; background: white; border-radius: 10px; position: absolute; bottom: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.3); transition: background 0.5s;"></div>
-            <div id="qibla-icon-box" style="position: absolute; top: 15px; background: white; border-radius: 8px; padding: 4px; transition: transform 0.3s, background 0.5s;">
-                <img src="https://cdn-icons-png.flaticon.com/512/447/447031.png" style="width: 35px;" alt="Kaaba">
-            </div>
-            <div style="width: 18px; height: 18px; background: white; border: 4px solid #3e5318; border-radius: 50%; z-index: 5;"></div>
+        <div id="compass-face" style="position: absolute; width: 100%; height: 100%; top:0; left:0;">
+            <div style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); color: red; font-weight: bold; font-size: 1.2rem;">N</div>
+            <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: black; font-weight: bold; font-size: 1.2rem;">S</div>
+            <div style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); color: black; font-weight: bold; font-size: 1.2rem;">E</div>
+            <div style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); color: black; font-weight: bold; font-size: 1.2rem;">W</div>
+            <div style="position: absolute; top: 15%; left: 80%; color: #3498db; font-size: 0.8rem; font-weight: bold;">60</div>
+            <div style="position: absolute; top: 80%; left: 80%; color: #3498db; font-size: 0.8rem; font-weight: bold;">120</div>
+            <div style="position: absolute; top: 80%; left: 15%; color: #3498db; font-size: 0.8rem; font-weight: bold;">240</div>
+            <div style="position: absolute; top: 15%; left: 15%; color: #3498db; font-size: 0.8rem; font-weight: bold;">300</div>
         </div>
+
+        <div id="qibla-needle" style="width: 100%; height: 100%; position: absolute; top:0; left:0; transition: transform 0.2s cubic-bezier(0.1, 0.5, 0.5, 1);">
+            <div id="kaaba-marker" style="position: absolute; top: 35px; left: 50%; transform: translateX(-50%); z-index: 10;">
+                <img src="https://cdn-icons-png.flaticon.com/512/447/447031.png" style="width: 32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));" alt="K">
+            </div>
+            <div id="green-arrow" style="width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-bottom: 25px solid #2ecc71; position: absolute; top: 10px; left: 50%; transform: translateX(-50%);"></div>
+            <div style="width: 4px; height: 100px; background: #2ecc71; position: absolute; top: 30px; left: 50%; transform: translateX(-50%); opacity: 0.3;"></div>
+        </div>
+
+        <div style="width: 45px; height: 45px; background: #3498db; border: 4px solid white; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 15; box-shadow: 0 4px 8px rgba(0,0,0,0.2);"></div>
     </div>
 
-    <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 15px; margin-top: 20px;">
-        <p style="margin: 0; font-size: 0.9rem;">خط العرض: <span id="user-lat">...</span> | خط الطول: <span id="user-lng">...</span></p>
-    </div>
-
-    <p id="qibla-status" style="font-size: 0.9rem; margin: 15px 0; color: #f0f0f0;">اضغط لتفعيل البوصلة الذكية</p>
-    <button onclick="startQiblaSmart()" style="background: white; color: #5b7527; border: none; padding: 12px 35px; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">تحديد القبلة</button>
+    <p id="qibla-status" style="font-size: 0.9rem; color: #7f8c8d; margin-bottom: 15px;">اجعل الهاتف في وضع أفقي تماماً</p>
+    <button onclick="activateQiblaMaster()" style="background: #a4be35; color: white; border: none; padding: 12px 40px; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(164, 190, 53, 0.3);">تفعيل البوصلة</button>
 </div>
-
-
 
 <main id="app-container">
     <div class="control-panel">
