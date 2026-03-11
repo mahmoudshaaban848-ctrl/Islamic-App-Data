@@ -94,6 +94,7 @@
             bottom: 0; width: 100%;
             box-shadow: 0 -2px 15px rgba(0,0,0,0.1);
             box-sizing: border-box;
+            z-index: 100;
         }
 
         .nav-btn {
@@ -120,11 +121,12 @@
 <div class="container">
     
     <a href="https://ketabonline.com/ar" class="main-link">🔍 تصفح مجمع الكتب بالكامل من هنا</a>
-<div onclick="openSmartTeacher()" style="background: linear-gradient(135deg, #1a4d3e, #2a6b57); margin: 15px 0; padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 2px solid #d4af37;">
-    <div style="font-size: 35px; margin-bottom: 8px;">🤖</div>
-    <h2 style="color: #ffffff; margin: 0; font-size: 1.2rem; font-family: 'Cairo', sans-serif;">المعلم الذكي</h2>
-    <p style="color: #e0eadd; font-size: 0.85rem; margin-top: 5px; font-family: 'Cairo', sans-serif;">اسأل في (البخاري، مسلم، السنن، ابن كثير، الألباني، وابن عثيمين)</p>
-</div>
+    
+    <div onclick="openSmartTeacher()" style="background: linear-gradient(135deg, #1a4d3e, #2a6b57); margin: 15px 0; padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 2px solid #d4af37;">
+        <div style="font-size: 35px; margin-bottom: 8px;">🤖</div>
+        <h2 style="color: #ffffff; margin: 0; font-size: 1.2rem; font-family: 'Cairo', sans-serif;">المعلم الذكي</h2>
+        <p style="color: #e0eadd; font-size: 0.85rem; margin-top: 5px; font-family: 'Cairo', sans-serif;">اسأل في (السيرة، الصحابة الكرام، الغزوات، والحديث)</p>
+    </div>
 
     <div class="category-title">📚 السنة النبوية الشريفة</div>
     <div class="book-list">
@@ -197,22 +199,24 @@
             <span class="book-author">الإمام الذهبي</span>
         </a>
     </div>
-<script>
+
+</div>
+
 <div id="teacher-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fcfafa; z-index: 10000; flex-direction: column; font-family: 'Cairo', sans-serif; text-align: right;" dir="rtl">
     <div style="background: #1a4d3e; color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #d4af37;">
         <div>
             <h4 style="margin: 0; font-size: 1.1rem;">المعلم الذكي الشامل</h4>
-            <small style="color: #d4af37; font-size: 0.8rem;">السيرة، الصحابة، الغزوات، والحديث</small>
+            <small style="color: #d4af37; font-size: 0.8rem;">السيرة، الصحابة الكرام، الغزوات</small>
         </div>
         <button onclick="closeSmartTeacher()" style="background: none; border: 1px solid white; color: white; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold;">✕</button>
     </div>
 
     <div id="chat-box" style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px;">
         <div style="background: #e9f0ea; padding: 15px; border-radius: 15px; border-right: 4px solid #d4af37; font-size: 0.9rem; color: #1a4d3e; line-height: 1.6;">
-            مرحباً بك. لقد تم تحديثي لأكون مرجعك في: <br>
+            مرحباً بك. أنا مساعدك في البحث في أمهات الكتب: <br>
             ✅ <b>السيرة النبوية والغزوات</b> (ابن هشام، الرحيق المختوم).<br>
             ✅ <b>تاريخ الصحابة الكرام</b> (سير أعلام النبلاء، الإصابة).<br>
-            ✅ <b>الأحداث التاريخية</b> (البداية والنهاية لابن كثير).<br>
+            ✅ <b>التاريخ العام</b> (البداية والنهاية لابن كثير).<br>
             ✅ <b>الحديث والتفسير</b> (البخاري، مسلم، ابن كثير).
         </div>
     </div>
@@ -223,7 +227,14 @@
     </div>
 </div>
 
+<nav class="bottom-nav">
+    <a href="index.html" class="nav-btn">📖 الأذكار</a>
+    <a href="times.html" class="nav-btn">🕋 المواقيت</a>
+    <a href="#" class="nav-btn active">📚 المكتبة</a>
+</nav>
+
 <script>
+// دوال تشغيل المعلم الذكي
 function openSmartTeacher() {
     document.getElementById('teacher-overlay').style.display = 'flex';
 }
@@ -236,16 +247,15 @@ async function sendMessage() {
     const input = document.getElementById('user-input');
     const chatBox = document.getElementById('chat-box');
     const userText = input.value.trim();
-    // ضع مفتاحك هنا
+    
+    // استبدل بكلمة السر الخاصة بك (API KEY)
     const apiKey = "ضع_مفتاحك_السري_هنا"; 
 
     if (userText !== "") {
-        // رسالة المستخدم
-        chatBox.innerHTML += `<div style="align-self: flex-start; background: #1a4d3e; color: white; padding: 12px 15px; border-radius: 15px 0 15px 15px; max-width: 85%; margin-bottom: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">${userText}</div>`;
+        chatBox.innerHTML += `<div style="align-self: flex-start; background: #1a4d3e; color: white; padding: 12px 15px; border-radius: 15px 0 15px 15px; max-width: 85%; margin-bottom: 5px;">${userText}</div>`;
         input.value = "";
         chatBox.scrollTop = chatBox.scrollHeight;
 
-        // رسالة التحميل
         const loadingId = "loading-" + Date.now();
         chatBox.innerHTML += `<div id="${loadingId}" style="align-self: flex-end; background: #e9f0ea; color: #1a4d3e; padding: 12px 15px; border-radius: 0 15px 15px 15px; border: 1px solid #d4af37;">جاري البحث في السيرة وأمهات الكتب... ⏳</div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
@@ -256,9 +266,8 @@ async function sendMessage() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     contents: [{ parts: [{ text: `أنت خبير في التاريخ الإسلامي والسيرة والحديث. أجب بدقة وفق منهج أهل السنة والجماعة. 
-                    مراجعك الأساسية هي: (السيرة النبوية لابن هشام، زاد المعاد لابن القيم، البداية والنهاية لابن كثير، سير أعلام النبلاء للذهبي، الرحيق المختوم، وصحيح البخاري ومسلم). 
-                    عند الحديث عن الصحابة استخدم لقب "الصحابة الكرام". 
-                    إذا سُئلت عن موقف تاريخي أو غزوة، اذكر تفاصيلها ومصدرها.
+                    مراجعك الأساسية: (ابن هشام، زاد المعاد، البداية والنهاية، سير أعلام النبلاء، البخاري ومسلم). 
+                    استخدم لقب "الصحابة الكرام" دائماً عند ذكرهم. 
                     السؤال هو: ${userText}` }] }]
                 })
             });
@@ -269,20 +278,12 @@ async function sendMessage() {
             document.getElementById(loadingId).remove();
             chatBox.innerHTML += `<div style="align-self: flex-end; background: #ffffff; color: #333; padding: 15px; border-radius: 0 15px 15px 15px; border: 1px solid #d4af37; max-width: 85%; line-height: 1.7; white-space: pre-wrap; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">${aiReply}</div>`;
         } catch (e) {
-            document.getElementById(loadingId).innerText = "عذراً، حدث خطأ. تأكد من الإنترنت أو كود الـ API.";
+            document.getElementById(loadingId).innerText = "عذراً، يرجى التحقق من مفتاح الـ API والاتصال بالإنترنت.";
         }
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 }
 </script>
-
-</div>
-
-<nav class="bottom-nav">
-    <a href="index.html" class="nav-btn">📖 الأذكار</a>
-    <a href="times.html" class="nav-btn">🕋 المواقيت</a>
-    <a href="#" class="nav-btn active">📚 المكتبة</a>
-</nav>
 
 </body>
 </html>
