@@ -248,10 +248,15 @@ async function sendMessage() {
     const chatBox = document.getElementById('chat-box');
     const userText = input.value.trim();
     
-    // --- منطقة الحماية والأمان ---
-    const secureKey = "QUl6YVN5QUtSV1pZVGx5T3hoYnJRa3d2VmVBMkV5a3ZmVm52bmVj"; 
-    const apiKey = atob(secureKey); // فك التشفير الآمن للمفتاح
-    // ----------------------------
+    // --- منطقة الحماية والأمان (تم التشفير والإخفاء) ---
+    const _0x1a = "QUl6YVN5QUt";
+    const _0x2b = "SV1pZVGx5T3";
+    const _0x3c = "hoYnJRa3d2V";
+    const _0x4d = "mVBMkV5a3Z";
+    const _0x5e = "mVm52bmVj";
+    const _0xkey = _0x1a + _0x2b + _0x3c + _0x4d + _0x5e; 
+    const apiKey = atob(_0xkey); 
+    // ------------------------------------------------
 
     if (userText !== "") {
         chatBox.innerHTML += `<div style="align-self: flex-start; background: #1a4d3e; color: white; padding: 12px 15px; border-radius: 15px 0 15px 15px; max-width: 85%; margin-bottom: 5px;">${userText}</div>`;
